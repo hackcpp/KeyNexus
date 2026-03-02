@@ -8,6 +8,40 @@ import { decrypt } from '@/lib/crypto'
 import type { ApiKeyRecord } from '@/types'
 import type { SimpleData, PairData } from '@/lib/crypto'
 
+// Mock 数据用于演示
+const MOCK_ITEMS: ApiKeyRecord[] = [
+  {
+    id: '1',
+    user_id: 'demo',
+    name: 'OpenAI API Key',
+    type: 'simple',
+    encrypted_payload: 'demo',
+    iv: 'demo',
+    salt: 'demo',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '2',
+    user_id: 'demo',
+    name: 'AWS Access Key',
+    type: 'pair',
+    encrypted_payload: 'demo',
+    iv: 'demo',
+    salt: 'demo',
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: '3',
+    user_id: 'demo',
+    name: 'GitHub Token',
+    type: 'simple',
+    encrypted_payload: 'demo',
+    iv: 'demo',
+    salt: 'demo',
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+  },
+]
+
 export function VaultList() {
   const [items, setItems] = useState<ApiKeyRecord[]>([])
   const [loading, setLoading] = useState(true)
@@ -18,7 +52,13 @@ export function VaultList() {
   const supabase = useMemo(() => createBrowserClient(), [])
 
   const fetchItems = useCallback(async () => {
-    if (!user) return
+    // 如果没有登录用户，使用 mock 数据
+    if (!user) {
+      setItems(MOCK_ITEMS)
+      setLoading(false)
+      return
+    }
+    
     setLoading(true)
     const { data, error: err } = await supabase
       .from('api_keys')
@@ -33,7 +73,7 @@ export function VaultList() {
       setItems(data ?? [])
     }
     setLoading(false)
-  }, [user])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchItems()
