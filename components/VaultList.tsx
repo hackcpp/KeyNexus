@@ -76,30 +76,30 @@ function KeyItem({ item, onDelete, onShowToast }: {
       <div className="actions">
         {item.type === 'simple' ? (
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary btn-copy"
             onClick={() => handleCopy('key')}
             disabled={!isUnlocked}
             title="Copy API Key"
           >
-            📋 Copy Key
+            🔑 Key
           </button>
         ) : (
           <>
             <button
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-copy"
               onClick={() => handleCopy('appId')}
               disabled={!isUnlocked}
               title="Copy App ID"
             >
-              📋 ID
+              🏷️ ID
             </button>
             <button
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-copy"
               onClick={() => handleCopy('appSecret')}
               disabled={!isUnlocked}
               title="Copy App Secret"
             >
-              📋 Secret
+              🔒 Secret
             </button>
           </>
         )}

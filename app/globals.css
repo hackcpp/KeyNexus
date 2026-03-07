@@ -87,6 +87,11 @@ main {
   background: #3f3f46;
 }
 
+.btn-copy {
+  width: 110px;
+  flex-shrink: 0;
+}
+
 .btn-danger {
   background: transparent;
   color: var(--danger);
