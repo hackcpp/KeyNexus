@@ -44,6 +44,9 @@ npm run dev
 
 ## 4. Vercel 部署步骤
 
+> **快速访问**：您也可以直接通过以下链接进入项目的域名设置页面：
+> `https://vercel.com/ziyou-projects/key-nexus/settings/domains`
+
 1. **导入仓库**：
    - 在 [Vercel Dashboard](https://vercel.com/dashboard) 点击 **Add New** -> **Project**。
    - 关联并导入您的 GitHub 仓库。
@@ -57,7 +60,7 @@ npm run dev
 
 3. **配置生产环境重定向 (核心安全步骤)**：
    - **为什么要配置？** OAuth 登录后，Google 和 Supabase 需要确认跳转回的域名是受信任的，否则会因安全策略报错。
-   - **获取域名**：在 Vercel 部署完成后，复制分配给你的生产域名（例如 `https://key-nexus.vercel.app`）。
+   - **获取域名**：在 Vercel 部署完成后，复制分配给你的生产域名（例如 `https://aiziyou.shop`）。
    - **配置 Supabase** (Dashboard -> Authentication -> URL Configuration)：
      - **Site URL**：填入你的 Vercel 域名。这确保了系统发送的确认邮件和重置链接指向正确的生产地址。
      - **Redirect URLs**：新增一条你的 Vercel 域名（建议末尾加 `/**`，如 `https://your-app.vercel.app/**`）。这告诉 Supabase 允许将登录成功的用户重定向回该地址。
