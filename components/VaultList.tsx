@@ -108,7 +108,7 @@ function KeyItem({ item, onDelete, onShowToast }: {
           <button
             className="btn btn-danger"
             onClick={() => setShowConfirm(true)}
-            title="Delete Key"
+            title="Delete"
           >
             🗑️
           </button>

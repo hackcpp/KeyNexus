@@ -12,6 +12,7 @@ interface AuthContextValue {
   user: User | null          // 当前登录用户，null表示未登录
   loading: boolean           // 认证状态加载中
   signInWithGoogle: () => Promise<void>  // Google OAuth 登录
+  signInWithGithub: () => Promise<void>  // GitHub OAuth 登录
   signOut: () => Promise<void>           // 退出登录
 }
 
@@ -61,6 +62,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   /**
+   * GitHub OAuth 登录
+   * 重定向到 GitHub 登录页面，成功后返回应用首页
+   */
+  const signInWithGithub = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: { redirectTo: `${window.location.origin}/` },
+    })
+  }
+
+  /**
    * 用户登出
    * 清除 Supabase 会话并重置用户状态
    */
@@ -70,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signInWithGoogle, signOut }}
+      value={{ user, loading, signInWithGoogle, signInWithGithub, signOut }}
     >
       {children}
     </AuthContext.Provider>

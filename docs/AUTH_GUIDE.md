@@ -56,7 +56,28 @@ export function createBrowserClient() {
 
 ## 3. 多环境部署配置 (关键)
 
-### 3.1 Supabase 后台设置
+### 3.1 GitHub OAuth 配置 (新增)
+1. **GitHub 端**:
+   - 进入 [GitHub Developer Settings](https://github.com/settings/developers) -> **OAuth Apps** -> **New OAuth App**。
+   - **Homepage URL**: `https://aiziyou.shop` (本地为 `http://localhost:3000`)。
+   - **Authorization callback URL**: `https://[PROJECT_ID].supabase.co/auth/v1/callback`。
+2. **Supabase 端**:
+   - 进入 **Authentication -> Providers -> GitHub**。
+   - 填入 GitHub 提供的 **Client ID** 和 **Client Secret**。
+
+### 3.2 同邮箱多账号处理 (GitHub vs Google)
+当用户的 GitHub 邮箱与 Google 邮箱一致时，Supabase 的处理逻辑取决于 **Authentication -> Settings** 中的配置：
+
+- **方案 A：自动关联 (默认行为)**
+  - **设置**: 在 **Authentication -> Settings** 中，寻找 `Allow manual linking` (启用手动关联 API) 配置。
+  - **效果**: 如果用户先用 Google 登录，后来改用相同邮箱的 GitHub 登录，Supabase 会自动将两者关联到同一个 User ID。
+  - **注意**: 只要 Google 和 GitHub 账号都已验证过邮箱（这是常态），此过程通常是自动完成的。
+
+- **方案 B：独立身份**
+  - **设置**: 将 `Allow multiple providers with same email` 设为 **ON** (开启)。
+  - **效果**: 系统会为同一个邮箱创建两个独立的身份（Identity），用户可以用任一方式登录，但它们指向同一个 Supabase User ID。
+
+### 3.3 Supabase 后台设置
 进入 **Authentication -> URL Configuration**：
 
 | 配置项 | 推荐设置 | 说明 |
