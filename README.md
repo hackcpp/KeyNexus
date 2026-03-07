@@ -1,5 +1,7 @@
 # KeyNexus - 智能密钥保险箱
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2FKeyNexus&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_MASTER_PASSWORD)
+
 一个基于 Next.js 和 Supabase 的云端密钥管理工具，采用零知识架构，确保敏感数据在客户端加密后才离开设备。
 
 ## ✨ 特性
@@ -41,6 +43,7 @@ cp .env.local.example .env.local
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_MASTER_PASSWORD=your_secure_master_password
 ```
 
 ### 数据库设置
