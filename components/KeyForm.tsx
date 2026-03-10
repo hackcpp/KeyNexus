@@ -11,7 +11,7 @@ import { useAuth } from '@/components/providers/AuthProvider'
  */
 export function KeyForm() {
   const { user } = useAuth()
-  const { masterPassword, isUnlocked } = useMasterPassword()
+  const { masterPassword } = useMasterPassword()
   const supabase = useMemo(() => createBrowserClient(), [])
   
   const [type, setType] = useState<'simple' | 'pair'>('simple')

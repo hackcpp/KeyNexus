@@ -8,7 +8,7 @@ import { useCallback } from 'react'
  * 显示用户信息和登出按钮
  */
 export function Header() {
-  const { user, signOut } = useAuth()
+  const { signOut } = useAuth()
 
   /**
    * 处理用户登出

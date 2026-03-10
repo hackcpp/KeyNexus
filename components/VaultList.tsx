@@ -9,11 +9,21 @@ import { createBrowserClient } from '@/lib/supabase/client'
 /**
  * 密钥列表项组件
  */
-function KeyItem({ item, onDelete, onShowToast }: { 
-  item: any, 
+type KeyItemProps = {
+  item: {
+    id: string
+    name: string
+    type: 'simple' | 'pair'
+    encrypted_payload: string
+    iv: string
+    salt: string
+    created_at: string
+  }
   onDelete: (id: string) => Promise<void>,
   onShowToast: (msg: string, type?: 'success' | 'error') => void
-}) {
+}
+
+function KeyItem({ item, onDelete, onShowToast }: KeyItemProps) {
   const { masterPassword, isUnlocked } = useMasterPassword()
   const [deleting, setDeleting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
@@ -65,8 +75,8 @@ function KeyItem({ item, onDelete, onShowToast }: {
       
       // 4. 显示 Toast 反馈
       onShowToast(`${fieldLabel} copied to clipboard`)
-    } catch (err) {
-      onShowToast(err instanceof Error ? err.message : 'Decryption failed', 'error')
+    } catch (error) {
+      onShowToast(error instanceof Error ? error.message : 'Decryption failed', 'error')
     }
   }
 
@@ -75,7 +85,7 @@ function KeyItem({ item, onDelete, onShowToast }: {
     try {
       await onDelete(item.id)
       onShowToast('Deleted successfully')
-    } catch (err) {
+    } catch {
       onShowToast('Failed to delete key', 'error')
     } finally {
       setDeleting(false)
@@ -160,7 +170,7 @@ function KeyItem({ item, onDelete, onShowToast }: {
  */
 export function VaultList() {
   const { user } = useAuth()
-  const [keys, setKeys] = useState<any[]>([])
+  const [keys, setKeys] = useState<KeyItemProps['item'][]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
   const [search, setSearch] = useState('')
