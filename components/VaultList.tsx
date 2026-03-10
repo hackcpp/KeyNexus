@@ -46,6 +46,7 @@ export function VaultList() {
   const [items, setItems] = useState<ApiKeyRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const { masterPassword, isUnlocked } = useMasterPassword()
   const { user } = useAuth()
@@ -84,6 +85,15 @@ export function VaultList() {
     window.addEventListener('keynexus:refresh', handler)
     return () => window.removeEventListener('keynexus:refresh', handler)
   }, [fetchItems])
+
+  // 根据搜索词过滤
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return items
+    const query = searchQuery.toLowerCase()
+    return items.filter(item => 
+      item.name.toLowerCase().includes(query)
+    )
+  }, [items, searchQuery])
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -157,14 +167,37 @@ export function VaultList() {
   return (
     <section className="vault-section">
       <h2>密钥库</h2>
+      
+      {/* 搜索框 */}
+      <div style={{ marginBottom: 16 }}>
+        <input
+          type="text"
+          placeholder="搜索密钥名称..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '10px 14px',
+            fontSize: 14,
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            background: 'var(--bg-input)',
+            color: 'var(--text)',
+            outline: 'none',
+          }}
+        />
+      </div>
+
       {error && (
         <p style={{ color: 'var(--danger)', fontSize: 14, marginBottom: 12 }}>{error}</p>
       )}
-      {items.length === 0 ? (
-        <p style={{ color: 'var(--text-muted)' }}>暂无密钥，请先添加</p>
+      {filteredItems.length === 0 ? (
+        <p style={{ color: 'var(--text-muted)' }}>
+          {searchQuery ? '未找到匹配的密钥' : '暂无密钥，请先添加'}
+        </p>
       ) : (
         <div className="vault-list">
-          {items.map((record) => (
+          {filteredItems.map((record) => (
             <div key={record.id} className="vault-card">
               <div className="vault-card-info">
                 <div className="vault-card-icon">{getTypeIcon(record.type)}</div>
