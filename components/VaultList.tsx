@@ -18,6 +18,26 @@ function KeyItem({ item, onDelete, onShowToast }: {
   const [deleting, setDeleting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
+  useEffect(() => {
+    if (!showConfirm) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation()
+        setShowConfirm(false)
+      } else if (event.key === 'Enter') {
+        event.preventDefault()
+        event.stopPropagation()
+        if (!deleting) {
+          handleDelete()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showConfirm, deleting])
+
   const handleCopy = async (field: 'key' | 'appId' | 'appSecret') => {
     if (!masterPassword) return
 
