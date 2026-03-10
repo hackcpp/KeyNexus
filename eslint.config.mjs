@@ -4,7 +4,7 @@ import nextPlugin from '@next/eslint-plugin-next'
 
 export default tseslint.config(
   {
-    ignores: ['.next/**/*', 'node_modules/**/*', 'supabase/**/*'],
+    ignores: ['.next/**/*', 'node_modules/**/*', 'supabase/**/*', 'next.config.js'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
