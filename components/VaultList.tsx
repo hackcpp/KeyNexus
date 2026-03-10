@@ -143,12 +143,32 @@ export function VaultList() {
   const [keys, setKeys] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
+  const [search, setSearch] = useState('')
   const supabase = useMemo(() => createBrowserClient(), [])
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 2000)
   }
+
+  const filteredKeys = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    if (!query) return keys
+
+    const tokens = query.split(/\s+/)
+
+    return keys.filter((item) => {
+      const haystack = [
+        item.name,
+        item.type,
+        item.created_at ? new Date(item.created_at).toLocaleDateString() : ''
+      ]
+        .join(' ')
+        .toLowerCase()
+
+      return tokens.every((token) => haystack.includes(token))
+    })
+  }, [keys, search])
 
   const fetchKeys = async () => {
     if (!user) return
@@ -198,10 +218,26 @@ export function VaultList() {
       )}
       <div className="vault-header">
         <h2 className="vault-title">Your Vault</h2>
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{keys.length} items</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <input
+            type="text"
+            className="input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name / type..."
+            style={{
+              maxWidth: '220px',
+              fontSize: '12px',
+              borderRadius: '999px'
+            }}
+          />
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            {filteredKeys.length} / {keys.length} items
+          </span>
+        </div>
       </div>
 
-      {keys.length === 0 ? (
+      {filteredKeys.length === 0 ? (
         <div style={{
           padding: '40px',
           textAlign: 'center',
@@ -210,11 +246,13 @@ export function VaultList() {
           border: '1px dashed var(--border)',
           color: 'var(--text-muted)'
         }}>
-          No keys found. Add your first secret above!
+          {keys.length === 0
+            ? 'No keys found. Add your first secret above!'
+            : 'No keys matched your search.'}
         </div>
       ) : (
         <div className="vault-grid">
-          {keys.map((item) => (
+          {filteredKeys.map((item) => (
             <KeyItem key={item.id} item={item} onDelete={handleDeleteKey} onShowToast={showToast} />
           ))}
         </div>
