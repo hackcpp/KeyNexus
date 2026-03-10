@@ -8,8 +8,8 @@ const SALT_LENGTH = 16;
 const IV_LENGTH = 12;
 const KEY_LENGTH = 256;
 
-function toBase64(buffer: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+function toBase64(data: Uint8Array): string {
+  return btoa(String.fromCharCode(...data));
 }
 
 function fromBase64(str: string): Uint8Array {
@@ -36,7 +36,7 @@ async function deriveKey(
   return crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt.buffer as ArrayBuffer,
       iterations: PBKDF2_ITERATIONS,
       hash: 'SHA-256',
     },
@@ -79,7 +79,7 @@ export async function encrypt(
   const ciphertext = await crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
-      iv,
+      iv: iv.buffer as ArrayBuffer,
       tagLength: 128,
     },
     key,
@@ -87,7 +87,7 @@ export async function encrypt(
   );
 
   return {
-    ciphertext: toBase64(ciphertext),
+    ciphertext: toBase64(new Uint8Array(ciphertext)),
     iv: toBase64(iv),
     salt: toBase64(salt),
   };
@@ -111,16 +111,16 @@ export async function decrypt<T extends PayloadData>(
     const decrypted = await crypto.subtle.decrypt(
       {
         name: 'AES-GCM',
-        iv,
+        iv: iv.buffer as ArrayBuffer,
         tagLength: 128,
       },
       key,
-      ciphertext
+      ciphertext.buffer as ArrayBuffer
     );
 
-    const json = new TextDecoder().decode(decrypted);
-    return JSON.parse(json) as T;
+    const text = new TextDecoder().decode(decrypted);
+    return JSON.parse(text) as T;
   } catch {
-    throw new Error('密码校验失败');
+    throw new Error('密码错误或数据损坏');
   }
 }
