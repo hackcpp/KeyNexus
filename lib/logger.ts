@@ -32,7 +32,7 @@ function createLogEntry(
     level,
     message,
     timestamp: new Date().toISOString(),
-    context
+    context,
   }
 }
 

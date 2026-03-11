@@ -57,7 +57,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
       const data = await decrypt<PayloadData>(masterPassword, {
         ciphertext: item.encrypted_payload,
         iv: item.iv,
-        salt: item.salt
+        salt: item.salt,
       })
 
       // 2. 获取目标内容
@@ -73,7 +73,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
 
       // 3. 复制到剪贴板
       await navigator.clipboard.writeText(text)
-      
+
       // 4. 显示 Toast 反馈
       showToast(`${fieldLabel} copied to clipboard`)
     } catch (error) {
@@ -136,24 +136,20 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
         )}
 
         {!showConfirm ? (
-          <button
-            className="btn btn-danger"
-            onClick={() => setShowConfirm(true)}
-            title="Delete"
-          >
+          <button className="btn btn-danger" onClick={() => setShowConfirm(true)} title="Delete">
             🗑️
           </button>
         ) : (
           <div className="confirm-actions">
-            <button 
-              className="btn btn-danger btn-confirm" 
+            <button
+              className="btn btn-danger btn-confirm"
               onClick={handleDelete}
               disabled={deleting}
             >
               {deleting ? '...' : 'Confirm'}
             </button>
-            <button 
-              className="btn btn-secondary btn-confirm" 
+            <button
+              className="btn btn-secondary btn-confirm"
               onClick={() => setShowConfirm(false)}
               disabled={deleting}
             >
@@ -186,7 +182,7 @@ export function VaultList() {
       const haystack = [
         item.name,
         item.type,
-        item.created_at ? new Date(item.created_at).toLocaleDateString() : ''
+        item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
       ]
         .join(' ')
         .toLowerCase()
@@ -209,10 +205,7 @@ export function VaultList() {
   }
 
   const handleDeleteKey = async (id: string) => {
-    const { error } = await supabase
-      .from('api_keys')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('api_keys').delete().eq('id', id)
 
     if (error) {
       alert('Delete failed: ' + error.message)
@@ -232,7 +225,11 @@ export function VaultList() {
   }, [user, supabase])
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading vault...</div>
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+        Loading vault...
+      </div>
+    )
   }
 
   return (
@@ -249,7 +246,7 @@ export function VaultList() {
             style={{
               maxWidth: '220px',
               fontSize: '12px',
-              borderRadius: '999px'
+              borderRadius: '999px',
             }}
           />
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -259,14 +256,16 @@ export function VaultList() {
       </div>
 
       {filteredKeys.length === 0 ? (
-        <div style={{
-          padding: '40px',
-          textAlign: 'center',
-          background: 'var(--bg-card)',
-          borderRadius: 'var(--radius)',
-          border: '1px dashed var(--border)',
-          color: 'var(--text-muted)'
-        }}>
+        <div
+          style={{
+            padding: '40px',
+            textAlign: 'center',
+            background: 'var(--bg-card)',
+            borderRadius: 'var(--radius)',
+            border: '1px dashed var(--border)',
+            color: 'var(--text-muted)',
+          }}
+        >
           {keys.length === 0
             ? 'No keys found. Add your first secret above!'
             : 'No keys matched your search.'}

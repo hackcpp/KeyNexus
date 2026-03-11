@@ -9,14 +9,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        {children}
+        <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+      </body>
     </html>
   )
 }

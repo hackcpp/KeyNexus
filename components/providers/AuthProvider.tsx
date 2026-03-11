@@ -9,11 +9,11 @@ import { createBrowserClient } from '@/lib/supabase/client'
  * 提供用户认证状态和相关操作方法
  */
 interface AuthContextValue {
-  user: User | null          // 当前登录用户，null表示未登录
-  loading: boolean           // 认证状态加载中
-  signInWithGoogle: () => Promise<void>  // Google OAuth 登录
-  signInWithGithub: () => Promise<void>  // GitHub OAuth 登录
-  signOut: () => Promise<void>           // 退出登录
+  user: User | null // 当前登录用户，null表示未登录
+  loading: boolean // 认证状态加载中
+  signInWithGoogle: () => Promise<void> // Google OAuth 登录
+  signInWithGithub: () => Promise<void> // GitHub OAuth 登录
+  signOut: () => Promise<void> // 退出登录
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -81,9 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, signInWithGoogle, signInWithGithub, signOut }}
-    >
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signInWithGithub, signOut }}>
       {children}
     </AuthContext.Provider>
   )

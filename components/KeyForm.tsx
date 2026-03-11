@@ -28,7 +28,7 @@ export function KeyForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!user) {
       showToast('Please sign in first', 'error')
       return
@@ -42,15 +42,10 @@ export function KeyForm() {
     setLoading(true)
     try {
       // 1. 准备加密载荷
-      const payload = type === 'simple'
-        ? { key: simpleKey }
-        : { appId, appSecret }
+      const payload = type === 'simple' ? { key: simpleKey } : { appId, appSecret }
 
       // 2. 客户端加密
-      const { ciphertext, iv, salt } = await encrypt(
-        masterPassword,
-        payload
-      )
+      const { ciphertext, iv, salt } = await encrypt(masterPassword, payload)
 
       // 3. 存储到 Supabase
       const { error } = await supabase.from('api_keys').insert({
@@ -59,7 +54,7 @@ export function KeyForm() {
         type,
         encrypted_payload: ciphertext,
         iv,
-        salt
+        salt,
       })
 
       if (error) throw error
@@ -152,7 +147,7 @@ export function KeyForm() {
           type="submit"
           className="btn btn-primary"
           style={{ width: '100%', marginTop: '8px' }}
-          disabled={loading || (type === 'simple' ? !simpleKey : (!appId || !appSecret)) || !name}
+          disabled={loading || (type === 'simple' ? !simpleKey : !appId || !appSecret) || !name}
         >
           {loading ? 'Saving...' : 'Securely Save'}
         </button>
