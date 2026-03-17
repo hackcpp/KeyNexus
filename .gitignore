@@ -36,3 +36,6 @@ coverage/
 
 # Misc
 *.log
+
+# TypeScript incremental compilation
+tsconfig.tsbuildinfo
