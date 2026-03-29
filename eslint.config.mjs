@@ -6,7 +6,13 @@ import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default tseslint.config(
   {
-    ignores: ['.next/**/*', 'node_modules/**/*', 'supabase/**/*', 'next.config.js'],
+    ignores: [
+      '.next/**/*',
+      'node_modules/**/*',
+      'supabase/**/*',
+      'next.config.js',
+      'next-env.d.ts',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
