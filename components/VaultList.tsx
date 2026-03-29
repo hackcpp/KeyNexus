@@ -256,16 +256,7 @@ export function VaultList() {
       </div>
 
       {filteredKeys.length === 0 ? (
-        <div
-          style={{
-            padding: '40px',
-            textAlign: 'center',
-            background: 'var(--bg-card)',
-            borderRadius: 'var(--radius)',
-            border: '1px dashed var(--border)',
-            color: 'var(--text-muted)',
-          }}
-        >
+        <div className="empty-state">
           {keys.length === 0
             ? 'No keys found. Add your first secret above!'
             : 'No keys matched your search.'}

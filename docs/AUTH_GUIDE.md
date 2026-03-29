@@ -56,7 +56,24 @@ export function createBrowserClient() {
 
 ## 3. 多环境部署配置 (关键)
 
-### 3.1 GitHub OAuth 配置 (新增)
+### 3.1 Supabase 后台设置
+进入 **Authentication -> URL Configuration**：
+
+| 配置项 | 推荐设置 | 说明 |
+| :--- | :--- | :--- |
+| **Site URL** | `https://aiziyou.shop` | 生产环境地址，用于系统邮件和默认重定向。 |
+| **Redirect URLs** | `http://localhost:3000/**`<br>`https://*-preview.vercel.app/**`<br>`https://aiziyou.shop/**` | **白名单列表**。必须包含本地地址、预览地址和生产地址。 |
+
+### 3.2 Google Cloud Console 设置
+进入 **APIs & Services -> Credentials**：
+
+1. **已授权的重定向 URI**:
+   - 填入 Supabase 的回调地址：`https://[PROJECT_ID].supabase.co/auth/v1/callback`
+2. **已授权的 JavaScript 来源**:
+   - 填入本地地址：`http://localhost:3000`
+   - 填入生产地址：`https://aiziyou.shop`
+
+### 3.3 GitHub OAuth 配置 (新增)
 1. **GitHub 端**:
    - 进入 [GitHub Developer Settings](https://github.com/settings/developers) -> **OAuth Apps** -> **New OAuth App**。
    - **Homepage URL**: `https://aiziyou.shop` (本地为 `http://localhost:3000`)。
@@ -65,7 +82,7 @@ export function createBrowserClient() {
    - 进入 **Authentication -> Providers -> GitHub**。
    - 填入 GitHub 提供的 **Client ID** 和 **Client Secret**。
 
-### 3.2 同邮箱多账号处理 (GitHub vs Google)
+### 3.4 同邮箱多账号处理 (GitHub vs Google)
 当用户的 GitHub 邮箱与 Google 邮箱一致时，Supabase 的处理逻辑取决于 **Authentication -> Settings** 中的配置：
 
 - **方案 A：自动关联 (默认行为)**
@@ -76,23 +93,6 @@ export function createBrowserClient() {
 - **方案 B：独立身份**
   - **设置**: 将 `Allow multiple providers with same email` 设为 **ON** (开启)。
   - **效果**: 系统会为同一个邮箱创建两个独立的身份（Identity），用户可以用任一方式登录，但它们指向同一个 Supabase User ID。
-
-### 3.3 Supabase 后台设置
-进入 **Authentication -> URL Configuration**：
-
-| 配置项 | 推荐设置 | 说明 |
-| :--- | :--- | :--- |
-| **Site URL** | `https://your-app.vercel.app` | 生产环境主域名，用于系统邮件和默认重定向。 |
-| **Redirect URLs** | `http://localhost:3000/**`<br>`https://*-preview.vercel.app/**` | **白名单列表**。必须包含本地地址和所有可能的预览/生产地址。 |
-
-### 3.2 Google Cloud Console 设置
-进入 **APIs & Services -> Credentials**：
-
-1. **已授权的重定向 URI**:
-   - 填入 Supabase 的回调地址：`https://[PROJECT_ID].supabase.co/auth/v1/callback`
-2. **已授权的 JavaScript 来源**:
-   - 填入本地地址：`http://localhost:3000`
-   - 填入 Vercel 生产地址：`https://aiziyou.shop`
 
 ---
 
