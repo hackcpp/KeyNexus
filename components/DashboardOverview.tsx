@@ -55,11 +55,15 @@ export function DashboardOverview() {
     fetchData()
   }, [fetchData])
 
+  const allIncome = entries.filter((e) => e.type === 'income').reduce((s, e) => s + e.amount, 0)
+  const allExpense = entries.filter((e) => e.type === 'expense').reduce((s, e) => s + e.amount, 0)
+  const allBalance = allIncome - allExpense
+
   const monthEntries = entries.filter((e) => e.date.startsWith(monthPrefix))
-  const totalIncome = monthEntries
+  const monthIncome = monthEntries
     .filter((e) => e.type === 'income')
     .reduce((s, e) => s + e.amount, 0)
-  const totalExpense = monthEntries
+  const monthExpense = monthEntries
     .filter((e) => e.type === 'expense')
     .reduce((s, e) => s + e.amount, 0)
 
@@ -75,21 +79,40 @@ export function DashboardOverview() {
     <div>
       <h1 className="page-title">系统总览</h1>
 
+      <h2 className="section-subtitle">累计统计</h2>
+      <div className="stat-cards">
+        <div className="stat-card">
+          <div className="stat-card-label">累计收入</div>
+          <div className="stat-card-value income">¥{allIncome.toFixed(2)}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">累计支出</div>
+          <div className="stat-card-value expense">¥{allExpense.toFixed(2)}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">累计结余</div>
+          <div className={`stat-card-value ${allBalance >= 0 ? 'income' : 'expense'}`}>
+            ¥{allBalance.toFixed(2)}
+          </div>
+        </div>
+      </div>
+
+      <h2 className="section-subtitle">本月概况</h2>
       <div className="stat-cards">
         <div className="stat-card">
           <div className="stat-card-label">本月收入</div>
-          <div className="stat-card-value income">¥{totalIncome.toFixed(2)}</div>
+          <div className="stat-card-value income">¥{monthIncome.toFixed(2)}</div>
         </div>
         <div className="stat-card">
           <div className="stat-card-label">本月支出</div>
-          <div className="stat-card-value expense">¥{totalExpense.toFixed(2)}</div>
+          <div className="stat-card-value expense">¥{monthExpense.toFixed(2)}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-label">结余</div>
+          <div className="stat-card-label">本月结余</div>
           <div
-            className={`stat-card-value ${totalIncome - totalExpense >= 0 ? 'income' : 'expense'}`}
+            className={`stat-card-value ${monthIncome - monthExpense >= 0 ? 'income' : 'expense'}`}
           >
-            ¥{(totalIncome - totalExpense).toFixed(2)}
+            ¥{(monthIncome - monthExpense).toFixed(2)}
           </div>
         </div>
       </div>
