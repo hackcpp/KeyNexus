@@ -55,6 +55,17 @@ export function DashboardOverview() {
     fetchData()
   }, [fetchData])
 
+  useEffect(() => {
+    const onLedgerRefresh = () => fetchData()
+    const onVaultRefresh = () => fetchData()
+    window.addEventListener('ledger:refresh', onLedgerRefresh)
+    window.addEventListener('vault:refresh', onVaultRefresh)
+    return () => {
+      window.removeEventListener('ledger:refresh', onLedgerRefresh)
+      window.removeEventListener('vault:refresh', onVaultRefresh)
+    }
+  }, [fetchData])
+
   const allIncome = entries.filter((e) => e.type === 'income').reduce((s, e) => s + e.amount, 0)
   const allExpense = entries.filter((e) => e.type === 'expense').reduce((s, e) => s + e.amount, 0)
   const allBalance = allIncome - allExpense
@@ -82,6 +93,12 @@ export function DashboardOverview() {
       <h2 className="section-subtitle">累计统计</h2>
       <div className="stat-cards">
         <div className="stat-card">
+          <div className="stat-card-label">累计结余</div>
+          <div className={`stat-card-value ${allBalance >= 0 ? 'income' : 'expense'}`}>
+            ¥{allBalance.toFixed(2)}
+          </div>
+        </div>
+        <div className="stat-card">
           <div className="stat-card-label">累计收入</div>
           <div className="stat-card-value income">¥{allIncome.toFixed(2)}</div>
         </div>
@@ -89,24 +106,10 @@ export function DashboardOverview() {
           <div className="stat-card-label">累计支出</div>
           <div className="stat-card-value expense">¥{allExpense.toFixed(2)}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-card-label">累计结余</div>
-          <div className={`stat-card-value ${allBalance >= 0 ? 'income' : 'expense'}`}>
-            ¥{allBalance.toFixed(2)}
-          </div>
-        </div>
       </div>
 
       <h2 className="section-subtitle">本月概况</h2>
       <div className="stat-cards">
-        <div className="stat-card">
-          <div className="stat-card-label">本月收入</div>
-          <div className="stat-card-value income">¥{monthIncome.toFixed(2)}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card-label">本月支出</div>
-          <div className="stat-card-value expense">¥{monthExpense.toFixed(2)}</div>
-        </div>
         <div className="stat-card">
           <div className="stat-card-label">本月结余</div>
           <div
@@ -114,6 +117,14 @@ export function DashboardOverview() {
           >
             ¥{(monthIncome - monthExpense).toFixed(2)}
           </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">本月收入</div>
+          <div className="stat-card-value income">¥{monthIncome.toFixed(2)}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">本月支出</div>
+          <div className="stat-card-value expense">¥{monthExpense.toFixed(2)}</div>
         </div>
       </div>
 
@@ -129,28 +140,6 @@ export function DashboardOverview() {
           <div className="quick-link-desc">{entries.length} 条记录</div>
         </Link>
       </div>
-
-      {monthEntries.length > 0 && (
-        <div>
-          <h2 className="section-subtitle">最近记录</h2>
-          <div className="ledger-entries">
-            {monthEntries
-              .sort((a, b) => b.date.localeCompare(a.date))
-              .slice(0, 5)
-              .map((entry) => (
-                <div key={entry.id} className="ledger-entry">
-                  <span className="ledger-entry-date">{entry.date}</span>
-                  <span className="ledger-entry-category">{entry.category}</span>
-                  <span className="ledger-entry-note">{entry.note}</span>
-                  <span className={`ledger-entry-amount ${entry.type}`}>
-                    {entry.type === 'income' ? '+' : '-'}
-                    {entry.amount.toFixed(2)}
-                  </span>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

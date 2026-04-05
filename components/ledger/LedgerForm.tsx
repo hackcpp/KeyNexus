@@ -18,7 +18,7 @@ export function LedgerForm() {
   const { showToast } = useToast()
   const supabase = useMemo(() => createBrowserClient(), [])
 
-  const [type, setType] = useState<LedgerType>('expense')
+  const [type, setType] = useState<LedgerType>('income')
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState(todayString())
@@ -72,17 +72,17 @@ export function LedgerForm() {
       <div className="tabs">
         <button
           type="button"
-          className={`tab ${type === 'expense' ? 'active' : ''}`}
-          onClick={() => setType('expense')}
-        >
-          支出
-        </button>
-        <button
-          type="button"
           className={`tab ${type === 'income' ? 'active' : ''}`}
           onClick={() => setType('income')}
         >
           收入
+        </button>
+        <button
+          type="button"
+          className={`tab ${type === 'expense' ? 'active' : ''}`}
+          onClick={() => setType('expense')}
+        >
+          支出
         </button>
       </div>
 
