@@ -230,18 +230,10 @@ export function LedgerStats() {
 
       <div className="chart-section">
         <div className="chart-title">
-          {viewMode === 'all' ? '年度收支趋势' : `${year}年月度收支`}
+          {viewMode === 'month' ? `${year}年月度收支` : '年度收支趋势'}
         </div>
-        <ResponsiveContainer width="100%" height={300}>
-          {viewMode === 'all' ? (
-            <BarChart data={yearlyData}>
-              <XAxis dataKey="year" tick={{ fill: '#9090a0', fontSize: 12 }} />
-              <YAxis tick={{ fill: '#9090a0', fontSize: 12 }} />
-              <Tooltip {...TOOLTIP_STYLE} />
-              <Bar dataKey="收入" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="支出" fill="#ef4444" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          ) : (
+        {viewMode === 'month' ? (
+          <ResponsiveContainer key="monthly" width="100%" height={300}>
             <BarChart data={monthlyData}>
               <XAxis dataKey="month" tick={{ fill: '#9090a0', fontSize: 12 }} />
               <YAxis tick={{ fill: '#9090a0', fontSize: 12 }} />
@@ -249,8 +241,18 @@ export function LedgerStats() {
               <Bar dataKey="收入" fill="#10b981" radius={[4, 4, 0, 0]} />
               <Bar dataKey="支出" fill="#ef4444" radius={[4, 4, 0, 0]} />
             </BarChart>
-          )}
-        </ResponsiveContainer>
+          </ResponsiveContainer>
+        ) : (
+          <ResponsiveContainer key="yearly" width="100%" height={300}>
+            <BarChart data={yearlyData}>
+              <XAxis dataKey="year" tick={{ fill: '#9090a0', fontSize: 12 }} />
+              <YAxis tick={{ fill: '#9090a0', fontSize: 12 }} />
+              <Tooltip {...TOOLTIP_STYLE} />
+              <Bar dataKey="收入" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="支出" fill="#ef4444" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {categoryData.length > 0 && (
