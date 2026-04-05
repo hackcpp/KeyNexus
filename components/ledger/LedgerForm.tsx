@@ -44,10 +44,7 @@ export function LedgerForm() {
         note,
         date,
       }
-      const encrypted = await encrypt(
-        masterPassword,
-        payload as unknown as Record<string, unknown>
-      )
+      const encrypted = await encrypt(masterPassword, payload as unknown as Record<string, unknown>)
 
       const { error } = await supabase.from('ledger_entries').insert({
         user_id: user.id,

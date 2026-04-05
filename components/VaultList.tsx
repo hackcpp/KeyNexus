@@ -265,9 +265,7 @@ export function VaultList() {
 
       {filteredKeys.length === 0 ? (
         <div className="empty-state">
-          {keys.length === 0
-            ? '暂无密钥，在上方添加第一个密钥吧！'
-            : '未找到匹配的密钥'}
+          {keys.length === 0 ? '暂无密钥，在上方添加第一个密钥吧！' : '未找到匹配的密钥'}
         </div>
       ) : (
         <>
