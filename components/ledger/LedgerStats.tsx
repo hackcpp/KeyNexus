@@ -165,19 +165,11 @@ export function LedgerStats() {
         </div>
         {viewMode === 'year' ? (
           <div className="month-picker" style={{ marginBottom: 0 }}>
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setYear(year - 1)}
-            >
+            <button type="button" className="btn btn-ghost" onClick={() => setYear(year - 1)}>
               ◀
             </button>
             <span className="month-picker-label">{year}年</span>
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setYear(year + 1)}
-            >
+            <button type="button" className="btn btn-ghost" onClick={() => setYear(year + 1)}>
               ▶
             </button>
           </div>
