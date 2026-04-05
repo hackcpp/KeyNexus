@@ -65,19 +65,17 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
       let fieldLabel = ''
       if (item.type === 'simple') {
         text = (data as SimpleData).key
-        fieldLabel = 'Key'
+        fieldLabel = '密钥'
       } else {
         text = field === 'appId' ? (data as PairData).appId : (data as PairData).appSecret
-        fieldLabel = field === 'appId' ? 'ID' : 'Secret'
+        fieldLabel = field === 'appId' ? 'ID' : '密钥'
       }
 
-      // 3. 复制到剪贴板
       await navigator.clipboard.writeText(text)
 
-      // 4. 显示 Toast 反馈
-      showToast(`${fieldLabel} copied to clipboard`)
+      showToast(`${fieldLabel} 已复制到剪贴板`)
     } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Decryption failed', 'error')
+      showToast(error instanceof Error ? error.message : '解密失败', 'error')
     }
   }
 
@@ -85,9 +83,9 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
     setDeleting(true)
     try {
       await onDelete(item.id)
-      showToast('Deleted successfully')
+      showToast('已删除')
     } catch {
-      showToast('Failed to delete key', 'error')
+      showToast('删除失败', 'error')
     } finally {
       setDeleting(false)
       setShowConfirm(false)
@@ -100,7 +98,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
         <div className="key-name">{item.name}</div>
         <div className="key-meta">
           <span className="badge">{item.type}</span>
-          <span>Added on {new Date(item.created_at).toLocaleDateString()}</span>
+          <span>添加于 {new Date(item.created_at).toLocaleDateString('zh-CN')}</span>
         </div>
       </div>
 
@@ -110,9 +108,9 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
             className="btn btn-secondary btn-copy"
             onClick={() => handleCopy('key')}
             disabled={!isUnlocked}
-            title="Copy API Key"
+            title="复制密钥"
           >
-            🔑 Key
+            🔑 密钥
           </button>
         ) : (
           <>
@@ -120,7 +118,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
               className="btn btn-secondary btn-copy"
               onClick={() => handleCopy('appId')}
               disabled={!isUnlocked}
-              title="Copy ID"
+              title="复制 ID"
             >
               🏷️ ID
             </button>
@@ -128,15 +126,15 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
               className="btn btn-secondary btn-copy"
               onClick={() => handleCopy('appSecret')}
               disabled={!isUnlocked}
-              title="Copy Secret"
+              title="复制密钥"
             >
-              🔒 Secret
+              🔒 密钥
             </button>
           </>
         )}
 
         {!showConfirm ? (
-          <button className="btn btn-danger" onClick={() => setShowConfirm(true)} title="Delete">
+          <button className="btn btn-danger" onClick={() => setShowConfirm(true)} title="删除">
             🗑️
           </button>
         ) : (
@@ -146,14 +144,14 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
               onClick={handleDelete}
               disabled={deleting}
             >
-              {deleting ? '...' : 'Confirm'}
+              {deleting ? '...' : '确认'}
             </button>
             <button
               className="btn btn-secondary btn-confirm"
               onClick={() => setShowConfirm(false)}
               disabled={deleting}
             >
-              Cancel
+              取消
             </button>
           </div>
         )}
@@ -208,7 +206,7 @@ export function VaultList() {
     const { error } = await supabase.from('api_keys').delete().eq('id', id)
 
     if (error) {
-      alert('Delete failed: ' + error.message)
+      alert('删除失败：' + error.message)
     } else {
       // 本地同步移除已删除的条目，避免整列表重新加载带来的抖动
       setKeys((prev) => prev.filter((item) => item.id !== id))
@@ -220,14 +218,14 @@ export function VaultList() {
 
     // 监听刷新事件（例如在添加新 Key 后）
     const handleRefresh = () => fetchKeys()
-    window.addEventListener('keynexus:refresh', handleRefresh)
-    return () => window.removeEventListener('keynexus:refresh', handleRefresh)
+    window.addEventListener('vault:refresh', handleRefresh)
+    return () => window.removeEventListener('vault:refresh', handleRefresh)
   }, [user, supabase])
 
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-        Loading vault...
+        加载中...
       </div>
     )
   }
@@ -235,14 +233,14 @@ export function VaultList() {
   return (
     <section className="vault-section">
       <div className="vault-header">
-        <h2 className="vault-title">Your Vault</h2>
+        <h2 className="vault-title">密钥列表</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <input
             type="text"
             className="input"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name / type..."
+            placeholder="搜索名称/类型..."
             style={{
               maxWidth: '220px',
               fontSize: '12px',
@@ -250,7 +248,7 @@ export function VaultList() {
             }}
           />
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            {filteredKeys.length} / {keys.length} items
+            {filteredKeys.length} / {keys.length} 项
           </span>
         </div>
       </div>
@@ -258,8 +256,8 @@ export function VaultList() {
       {filteredKeys.length === 0 ? (
         <div className="empty-state">
           {keys.length === 0
-            ? 'No keys found. Add your first secret above!'
-            : 'No keys matched your search.'}
+            ? '暂无密钥，在上方添加第一个密钥吧！'
+            : '未找到匹配的密钥'}
         </div>
       ) : (
         <div className="vault-grid">

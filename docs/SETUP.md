@@ -1,4 +1,4 @@
-# KeyNexus 部署与配置指南
+# SoloBiz 部署与配置指南
 
 ## 1. 环境变量
 
@@ -70,4 +70,4 @@ npm run dev
      - 在 **已授权的 JavaScript 来源** (Authorized JavaScript origins) 中添加你的 Vercel 域名。
 
 4. **完成**：
-   - 现在您可以通过 Vercel 域名安全地访问 KeyNexus 了。
+   - 现在您可以通过 Vercel 域名安全地访问 SoloBiz 了。
