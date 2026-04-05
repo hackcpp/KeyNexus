@@ -1,7 +1,7 @@
 {
-  "name": "keynexus",
-  "version": "1.0.0",
-  "description": "",
+  "name": "solobiz",
+  "version": "2.0.0",
+  "description": "一人公司系统 - 密钥管理与收支记账",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -29,7 +29,8 @@
     "@supabase/supabase-js": "^2.98.0",
     "next": "^16.1.6",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

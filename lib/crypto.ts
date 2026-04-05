@@ -1,5 +1,5 @@
 /**
- * KeyNexus 客户端加密模块
+ * SoloBiz 客户端加密模块
  * 零知识架构：PBKDF2 + AES-GCM，所有加解密在浏览器完成
  *
  * 安全特性：
@@ -105,7 +105,7 @@ export type PayloadData = SimpleData | PairData
  */
 export async function encrypt(
   password: string,
-  data: SimpleData | PairData
+  data: Record<string, unknown>
 ): Promise<EncryptedPayload> {
   // 生成随机盐和初始化向量
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH))
@@ -150,7 +150,7 @@ export async function encrypt(
  * @returns 解密后的原始 JSON 数据
  * @throws 当密码错误或数据损坏时抛出错误
  */
-export async function decrypt<T extends PayloadData>(
+export async function decrypt<T = PayloadData>(
   password: string,
   encrypted: EncryptedPayload
 ): Promise<T> {

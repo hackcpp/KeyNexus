@@ -1,13 +1,13 @@
-# KeyNexus 认证与授权方案指南 (Supabase + Google OAuth)
+# SoloBiz 认证与授权方案指南 (Supabase + Google OAuth)
 
-本文档详细记录了 KeyNexus 项目中集成的身份认证方案，涵盖了从架构设计到多环境部署的核心逻辑与配置。
+本文档详细记录了 SoloBiz 项目中集成的身份认证方案，涵盖了从架构设计到多环境部署的核心逻辑与配置。
 
 ## 1. 架构设计
 
 ### 1.1 技术栈
 - **认证服务**: Supabase Auth (GoTrue)
 - **身份提供商 (IdP)**: Google OAuth
-- **前端框架**: Next.js 15 (App Router)
+- **前端框架**: Next.js 16 (App Router)
 - **状态管理**: React Context API (`AuthProvider`)
 
 ### 1.2 核心流程

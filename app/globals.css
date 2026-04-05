@@ -549,9 +549,10 @@ main::before {
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
-.login-icon {
-  font-size: 56px;
-  margin-bottom: 20px;
+.login-logo {
+  font-size: 40px;
+  color: var(--accent);
+  margin-bottom: 16px;
   display: block;
   animation: float 3s ease-in-out infinite;
 }
@@ -579,6 +580,7 @@ main::before {
   margin-bottom: 36px;
   font-size: 15px;
   line-height: 1.6;
+  letter-spacing: 0.1em;
 }
 
 .login-buttons {
@@ -593,23 +595,6 @@ main::before {
   width: 100%;
   padding: 14px 20px;
   font-size: 15px;
-}
-
-.security-note {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--text-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.security-note::before {
-  content: '🔒';
-  font-size: 14px;
 }
 
 /* ========================================
@@ -745,13 +730,386 @@ main::before {
 }
 
 /* ========================================
+   App Shell & Sidebar
+======================================== */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-content {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 960px;
+  overflow-y: auto;
+}
+
+.sidebar {
+  width: 220px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  padding: 0 20px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-logo {
+  color: var(--accent);
+  font-size: 20px;
+}
+
+.sidebar-title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-xs);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.sidebar-link:hover {
+  background: var(--bg-input);
+  color: var(--text);
+}
+
+.sidebar-link.active {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sidebar-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+/* ========================================
+   Page Elements
+======================================== */
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.section-subtitle {
+  font-size: 16px;
+  font-family: var(--font-mono);
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+/* ========================================
+   Stat Cards
+======================================== */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.stat-card-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.stat-card-value {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.stat-card-value.income {
+  color: var(--success);
+}
+
+.stat-card-value.expense {
+  color: var(--danger);
+}
+
+/* ========================================
+   Ledger Entries
+======================================== */
+.ledger-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ledger-entry {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.ledger-entry:hover {
+  border-color: var(--border-hover);
+}
+
+.ledger-entry-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.ledger-entry-category {
+  font-size: 12px;
+  background: var(--bg-input);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.ledger-entry-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ledger-entry-amount {
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.ledger-entry-amount.income {
+  color: var(--success);
+}
+
+.ledger-entry-amount.expense {
+  color: var(--danger);
+}
+
+/* ========================================
+   Chart Sections
+======================================== */
+.chart-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+/* ========================================
+   Month Picker
+======================================== */
+.month-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.month-picker-label {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  min-width: 120px;
+  text-align: center;
+}
+
+/* ========================================
+   Category Manager
+======================================== */
+.category-section {
+  margin-bottom: 28px;
+}
+
+.category-section-title {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.category-tag button {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+}
+
+.category-tag button:hover {
+  color: var(--danger);
+}
+
+/* ========================================
+   Dashboard Quick Links
+======================================== */
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.quick-link {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-link-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.quick-link-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.quick-link-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ========================================
+   Select Input (shared)
+======================================== */
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7a85' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+/* ========================================
    Responsive
 ======================================== */
-@media (max-width: 640px) {
-  main {
-    padding: 32px 16px;
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
   }
 
+  .app-content {
+    padding: 24px 16px;
+  }
+
+  .stat-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-links {
+    grid-template-columns: 1fr;
+  }
+
+  .ledger-entry {
+    flex-wrap: wrap;
+  }
+
+  .ledger-entry-note {
+    order: 5;
+    width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 640px) {
   .form-card {
     padding: 20px;
   }

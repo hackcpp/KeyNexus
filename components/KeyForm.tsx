@@ -30,12 +30,12 @@ export function KeyForm() {
     e.preventDefault()
 
     if (!user) {
-      showToast('Please sign in first', 'error')
+      showToast('请先登录', 'error')
       return
     }
 
     if (!masterPassword) {
-      showToast('Master Password not set', 'error')
+      showToast('主密码未设置', 'error')
       return
     }
 
@@ -64,11 +64,11 @@ export function KeyForm() {
       setSimpleKey('')
       setAppId('')
       setAppSecret('')
-      window.dispatchEvent(new CustomEvent('keynexus:refresh'))
-      showToast('Saved securely!')
+      window.dispatchEvent(new CustomEvent('vault:refresh'))
+      showToast('已安全保存')
     } catch (err) {
       logError('Failed to save key', err)
-      showToast('Failed to save key', 'error')
+      showToast('保存失败', 'error')
     } finally {
       setLoading(false)
     }
@@ -81,22 +81,22 @@ export function KeyForm() {
           className={`tab ${type === 'simple' ? 'active' : ''}`}
           onClick={() => setType('simple')}
         >
-          Simple Key
+          单密钥
         </button>
         <button
           className={`tab ${type === 'pair' ? 'active' : ''}`}
           onClick={() => setType('pair')}
         >
-          ID + Secret
+          ID + 密钥
         </button>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Name</label>
+          <label>名称</label>
           <input
             className="input"
-            placeholder="e.g. OpenAI, AWS Production..."
+            placeholder="如：OpenAI、AWS 生产环境..."
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -106,7 +106,7 @@ export function KeyForm() {
         <div className={`form-dynamic-area ${type}`}>
           {type === 'simple' ? (
             <div className="form-group animate-fade-in">
-              <label>API Key</label>
+              <label>API 密钥</label>
               <input
                 className="input"
                 type="password"
@@ -119,21 +119,21 @@ export function KeyForm() {
           ) : (
             <div className="animate-fade-in">
               <div className="form-group">
-                <label>App ID / Client ID</label>
+                <label>应用 ID</label>
                 <input
                   className="input"
-                  placeholder="Enter ID"
+                  placeholder="输入 ID"
                   value={appId}
                   onChange={(e) => setAppId(e.target.value)}
                   required
                 />
               </div>
               <div className="form-group">
-                <label>App Secret</label>
+                <label>应用密钥</label>
                 <input
                   className="input"
                   type="password"
-                  placeholder="Enter Secret"
+                  placeholder="输入密钥"
                   value={appSecret}
                   onChange={(e) => setAppSecret(e.target.value)}
                   required
@@ -149,7 +149,7 @@ export function KeyForm() {
           style={{ width: '100%', marginTop: '8px' }}
           disabled={loading || (type === 'simple' ? !simpleKey : !appId || !appSecret) || !name}
         >
-          {loading ? 'Saving...' : 'Securely Save'}
+          {loading ? '保存中...' : '安全保存'}
         </button>
       </form>
     </section>
