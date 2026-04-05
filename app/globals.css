@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 :root {
-  /* 主色调 - 墨蓝渐变 */
-  --bg: #050507;
-  --bg-card: #0c0c10;
-  --bg-input: #141418;
-  --bg-elevated: #1a1a20;
-  --border: #2a2a35;
-  --border-hover: #3a3a48;
+  /* 主色调 */
+  --bg: #0e0e12;
+  --bg-card: #161620;
+  --bg-input: #1e1e28;
+  --bg-elevated: #262630;
+  --border: #35354a;
+  --border-hover: #4a4a60;
 
   /* 文本 */
-  --text: #f0f0f5;
-  --text-muted: #7a7a85;
-  --text-dim: #505060;
+  --text: #ededf2;
+  --text-muted: #9090a0;
+  --text-dim: #6a6a7a;
 
   /* Accent - 金色/琥珀色 */
   --accent: #f59e0b;
@@ -28,8 +28,8 @@
 
   /* 渐变色 */
   --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --gradient-card: linear-gradient(180deg, #0c0c10 0%, #080810 100%);
-  --gradient-bg: radial-gradient(ellipse at 50% 0%, #151520 0%, #050507 60%);
+  --gradient-card: linear-gradient(180deg, #161620 0%, #121218 100%);
+  --gradient-bg: radial-gradient(ellipse at 50% 0%, #1e1e2a 0%, #0e0e12 60%);
 
   /* 尺寸与效果 */
   --radius: 16px;
@@ -53,6 +53,9 @@
 
 body {
   font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -133,9 +136,9 @@ main::before {
    Buttons
 ======================================== */
 .btn {
-  padding: 10px 20px;
+  padding: 11px 22px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -270,8 +273,8 @@ main::before {
   flex: 1;
   padding: 10px 16px;
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   text-align: center;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -299,8 +302,8 @@ main::before {
 
 .form-group label {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text-muted);
   margin-bottom: 8px;
   letter-spacing: 0.05em;
@@ -320,7 +323,7 @@ main::before {
   padding: 14px 16px;
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 14px;
+  font-size: 15px;
   font-family: var(--font-sans);
   outline: none;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -442,8 +445,8 @@ main::before {
 }
 
 .key-name {
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -454,7 +457,7 @@ main::before {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
@@ -788,21 +791,24 @@ main::before {
   gap: 10px;
   padding: 10px 12px;
   border-radius: var(--radius-xs);
-  color: var(--text-muted);
+  color: var(--text);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.7;
   transition: all 0.2s;
 }
 
 .sidebar-link:hover {
   background: var(--bg-input);
-  color: var(--text);
+  opacity: 1;
 }
 
 .sidebar-link.active {
   background: var(--accent-subtle);
   color: var(--accent);
   font-weight: 600;
+  opacity: 1;
 }
 
 .sidebar-icon {
@@ -821,7 +827,7 @@ main::before {
    Page Elements
 ======================================== */
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   font-family: var(--font-mono);
   letter-spacing: -0.02em;
@@ -853,7 +859,7 @@ main::before {
 }
 
 .stat-card-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   text-transform: uppercase;
   font-family: var(--font-mono);
@@ -862,7 +868,7 @@ main::before {
 }
 
 .stat-card-value {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   font-family: var(--font-mono);
 }
@@ -900,7 +906,7 @@ main::before {
 }
 
 .ledger-entry-date {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   font-family: var(--font-mono);
   min-width: 90px;
@@ -908,7 +914,7 @@ main::before {
 }
 
 .ledger-entry-category {
-  font-size: 12px;
+  font-size: 13px;
   background: var(--bg-input);
   padding: 2px 8px;
   border-radius: 4px;
@@ -917,7 +923,7 @@ main::before {
 }
 
 .ledger-entry-note {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   flex: 1;
   min-width: 0;
@@ -927,7 +933,7 @@ main::before {
 }
 
 .ledger-entry-amount {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   font-family: var(--font-mono);
   flex-shrink: 0;
@@ -967,7 +973,6 @@ main::before {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
 }
 
 .month-picker-label {
@@ -1055,12 +1060,12 @@ main::before {
 }
 
 .quick-link-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .quick-link-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -1084,6 +1089,26 @@ main::before {
   color: var(--text-muted);
   min-width: 60px;
   text-align: center;
+}
+
+/* ========================================
+   Date Input
+======================================== */
+input[type='date'].input {
+  cursor: pointer;
+}
+
+input[type='date'].input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+input[type='date'].input::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.9);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* ========================================

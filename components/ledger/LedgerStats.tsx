@@ -31,6 +31,13 @@ const COLORS = [
   '#f97316',
 ]
 
+const TOOLTIP_STYLE = {
+  contentStyle: { background: '#161620', border: '1px solid #35354a', borderRadius: '8px' },
+  labelStyle: { color: '#ededf2' },
+}
+
+type ViewMode = 'year' | 'month'
+
 export function LedgerStats() {
   const { user } = useAuth()
   const { masterPassword } = useMasterPassword()
@@ -39,6 +46,7 @@ export function LedgerStats() {
   const now = new Date()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
+  const [viewMode, setViewMode] = useState<ViewMode>('year')
   const [allEntries, setAllEntries] = useState<DecryptedLedgerEntry[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -80,15 +88,22 @@ export function LedgerStats() {
     return () => window.removeEventListener('ledger:refresh', handler)
   }, [fetchAll])
 
+  const yearEntries = useMemo(
+    () => allEntries.filter((e) => e.date.startsWith(`${year}-`)),
+    [allEntries, year]
+  )
+
   const monthEntries = useMemo(() => {
     const prefix = `${year}-${String(month).padStart(2, '0')}`
     return allEntries.filter((e) => e.date.startsWith(prefix))
   }, [allEntries, year, month])
 
-  const totalIncome = monthEntries
+  const currentEntries = viewMode === 'year' ? yearEntries : monthEntries
+
+  const totalIncome = currentEntries
     .filter((e) => e.type === 'income')
     .reduce((s, e) => s + e.amount, 0)
-  const totalExpense = monthEntries
+  const totalExpense = currentEntries
     .filter((e) => e.type === 'expense')
     .reduce((s, e) => s + e.amount, 0)
   const balance = totalIncome - totalExpense
@@ -108,7 +123,7 @@ export function LedgerStats() {
 
   const categoryData = useMemo(() => {
     const map = new Map<string, number>()
-    monthEntries
+    currentEntries
       .filter((e) => e.type === 'expense')
       .forEach((e) => {
         map.set(e.category, (map.get(e.category) || 0) + e.amount)
@@ -116,7 +131,10 @@ export function LedgerStats() {
     return Array.from(map.entries())
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value)
-  }, [monthEntries])
+  }, [currentEntries])
+
+  const periodLabel = viewMode === 'year' ? `${year}年` : `${month}月`
+  const summaryLabel = viewMode === 'year' ? '年度' : '本月'
 
   if (loading) {
     return (
@@ -128,22 +146,60 @@ export function LedgerStats() {
 
   return (
     <div>
-      <MonthPicker
-        year={year}
-        month={month}
-        onChange={(y, m) => {
-          setYear(y)
-          setMonth(m)
-        }}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+        <div className="tabs" style={{ marginBottom: 0, width: 'auto' }}>
+          <button
+            type="button"
+            className={`tab ${viewMode === 'year' ? 'active' : ''}`}
+            onClick={() => setViewMode('year')}
+          >
+            按年
+          </button>
+          <button
+            type="button"
+            className={`tab ${viewMode === 'month' ? 'active' : ''}`}
+            onClick={() => setViewMode('month')}
+          >
+            按月
+          </button>
+        </div>
+        {viewMode === 'year' ? (
+          <div className="month-picker" style={{ marginBottom: 0 }}>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setYear(year - 1)}
+            >
+              ◀
+            </button>
+            <span className="month-picker-label">{year}年</span>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setYear(year + 1)}
+            >
+              ▶
+            </button>
+          </div>
+        ) : (
+          <MonthPicker
+            year={year}
+            month={month}
+            onChange={(y, m) => {
+              setYear(y)
+              setMonth(m)
+            }}
+          />
+        )}
+      </div>
 
       <div className="stat-cards">
         <div className="stat-card">
-          <div className="stat-card-label">本月收入</div>
+          <div className="stat-card-label">{summaryLabel}收入</div>
           <div className="stat-card-value income">¥{totalIncome.toFixed(2)}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-label">本月支出</div>
+          <div className="stat-card-label">{summaryLabel}支出</div>
           <div className="stat-card-value expense">¥{totalExpense.toFixed(2)}</div>
         </div>
         <div className="stat-card">
@@ -158,16 +214,9 @@ export function LedgerStats() {
         <div className="chart-title">{year}年月度收支</div>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={monthlyData}>
-            <XAxis dataKey="month" tick={{ fill: '#7a7a85', fontSize: 12 }} />
-            <YAxis tick={{ fill: '#7a7a85', fontSize: 12 }} />
-            <Tooltip
-              contentStyle={{
-                background: '#0c0c10',
-                border: '1px solid #2a2a35',
-                borderRadius: '8px',
-              }}
-              labelStyle={{ color: '#f0f0f5' }}
-            />
+            <XAxis dataKey="month" tick={{ fill: '#9090a0', fontSize: 12 }} />
+            <YAxis tick={{ fill: '#9090a0', fontSize: 12 }} />
+            <Tooltip {...TOOLTIP_STYLE} />
             <Bar dataKey="收入" fill="#10b981" radius={[4, 4, 0, 0]} />
             <Bar dataKey="支出" fill="#ef4444" radius={[4, 4, 0, 0]} />
           </BarChart>
@@ -176,7 +225,7 @@ export function LedgerStats() {
 
       {categoryData.length > 0 && (
         <div className="chart-section">
-          <div className="chart-title">{month}月支出分类</div>
+          <div className="chart-title">{periodLabel}支出分类</div>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -192,13 +241,7 @@ export function LedgerStats() {
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: '#0c0c10',
-                  border: '1px solid #2a2a35',
-                  borderRadius: '8px',
-                }}
-              />
+              <Tooltip contentStyle={TOOLTIP_STYLE.contentStyle} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
