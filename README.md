@@ -73,8 +73,9 @@ SoloBiz/
 │   ├── Sidebar.tsx             # 导航侧边栏
 │   ├── DashboardOverview.tsx   # 总览页
 │   ├── LoginPage.tsx           # 登录页
-│   ├── KeyForm.tsx             # 密钥添加表单
-│   ├── VaultList.tsx           # 密钥列表
+│   ├── vault/                  # 密钥模块
+│   │   ├── KeyForm.tsx         # 添加表单
+│   │   └── VaultList.tsx       # 密钥列表
 │   ├── ledger/                 # 账本模块
 │   │   ├── LedgerForm.tsx      # 记账表单
 │   │   ├── LedgerList.tsx      # 记录列表

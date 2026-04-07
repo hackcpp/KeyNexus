@@ -2,11 +2,9 @@
 
 import { useState, useMemo } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
 import { useToast } from '@/components/providers/ToastProvider'
-import { encrypt } from '@/lib/crypto'
 import { createBrowserClient } from '@/lib/supabase/client'
-import type { LedgerEntryData, LedgerType } from '@/types'
+import type { LedgerEntryInput, LedgerType } from '@/types'
 
 function todayString() {
   return new Date().toISOString().slice(0, 10)
@@ -14,7 +12,6 @@ function todayString() {
 
 export function LedgerForm() {
   const { user } = useAuth()
-  const { masterPassword } = useMasterPassword()
   const { showToast } = useToast()
   const supabase = useMemo(() => createBrowserClient(), [])
 
@@ -27,7 +24,7 @@ export function LedgerForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !masterPassword) return
+    if (!user) return
 
     const amountNum = parseFloat(amount)
     if (isNaN(amountNum) || amountNum <= 0) {
@@ -37,20 +34,21 @@ export function LedgerForm() {
 
     setSaving(true)
     try {
-      const payload: LedgerEntryData = {
+      const payload: LedgerEntryInput = {
         type,
         amount: amountNum,
         category: category.trim() || '未分类',
         note,
         date,
       }
-      const encrypted = await encrypt(masterPassword, payload as unknown as Record<string, unknown>)
 
       const { error } = await supabase.from('ledger_entries').insert({
         user_id: user.id,
-        encrypted_payload: encrypted.ciphertext,
-        iv: encrypted.iv,
-        salt: encrypted.salt,
+        type: payload.type,
+        amount: payload.amount,
+        category: payload.category,
+        note: payload.note,
+        date: payload.date,
       })
 
       if (error) throw error

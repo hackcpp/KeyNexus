@@ -3,8 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { CSSProperties } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
-import { decrypt } from '@/lib/crypto'
+import { ledgerEntryFromDbRow, type LedgerEntryDbRow } from '@/lib/ledger'
 import {
   ledgerCategoryGroupKey,
   normalizeLedgerCategoryDisplay,
@@ -25,7 +24,7 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts'
-import type { LedgerEntryData, LedgerEntryRecord, DecryptedLedgerEntry } from '@/types'
+import type { LedgerEntry } from '@/types'
 
 const INCOME_PIE_COLORS = ['#10b981', '#34d399', '#059669', '#6ee7b7', '#047857']
 const EXPENSE_PIE_COLORS = ['#ef4444', '#f87171', '#dc2626', '#fca5a5', '#b91c1c']
@@ -80,10 +79,7 @@ type ViewMode = 'all' | 'year' | 'month'
 
 type LedgerLinePoint = { label: string; 收入: number; 支出: number }
 
-function aggregateLedgerCategoryAmounts(
-  entries: DecryptedLedgerEntry[],
-  ledgerType: 'income' | 'expense'
-) {
+function aggregateLedgerCategoryAmounts(entries: LedgerEntry[], ledgerType: 'income' | 'expense') {
   const map = new Map<string, { name: string; value: number }>()
   for (const e of entries) {
     if (e.type !== ledgerType) continue
@@ -102,18 +98,17 @@ function aggregateLedgerCategoryAmounts(
 
 export function LedgerStats() {
   const { user } = useAuth()
-  const { masterPassword } = useMasterPassword()
   const supabase = useMemo(() => createBrowserClient(), [])
 
   const now = new Date()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
   const [viewMode, setViewMode] = useState<ViewMode>('all')
-  const [allEntries, setAllEntries] = useState<DecryptedLedgerEntry[]>([])
+  const [allEntries, setAllEntries] = useState<LedgerEntry[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchAll = useCallback(async () => {
-    if (!user || !masterPassword) return
+    if (!user) return
     const { data } = await supabase
       .from('ledger_entries')
       .select('*')
@@ -124,24 +119,13 @@ export function LedgerStats() {
       return
     }
 
-    const decrypted = await Promise.all(
-      data.map(async (r: LedgerEntryRecord) => {
-        try {
-          const p = await decrypt<LedgerEntryData>(masterPassword, {
-            ciphertext: r.encrypted_payload,
-            iv: r.iv,
-            salt: r.salt,
-          })
-          return { ...p, id: r.id, created_at: r.created_at }
-        } catch {
-          return null
-        }
-      })
+    setAllEntries(
+      data
+        .map((r) => ledgerEntryFromDbRow(r as LedgerEntryDbRow))
+        .filter((e): e is LedgerEntry => e !== null)
     )
-
-    setAllEntries(decrypted.filter((e): e is DecryptedLedgerEntry => e !== null))
     setLoading(false)
-  }, [user, masterPassword, supabase])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchAll()

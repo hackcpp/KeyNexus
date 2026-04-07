@@ -7,9 +7,6 @@ import { useToast } from '@/components/providers/ToastProvider'
 import { decrypt, type PayloadData, type SimpleData, type PairData } from '@/lib/crypto'
 import { createBrowserClient } from '@/lib/supabase/client'
 
-/**
- * 密钥列表项组件
- */
 type KeyItemProps = {
   item: {
     id: string
@@ -53,14 +50,12 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
     if (!masterPassword) return
 
     try {
-      // 1. 解密数据
       const data = await decrypt<PayloadData>(masterPassword, {
         ciphertext: item.encrypted_payload,
         iv: item.iv,
         salt: item.salt,
       })
 
-      // 2. 获取目标内容
       let text = ''
       let fieldLabel = ''
       if (item.type === 'simple') {
@@ -105,6 +100,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
       <div className="actions">
         {item.type === 'simple' ? (
           <button
+            type="button"
             className="btn btn-secondary btn-copy"
             onClick={() => handleCopy('key')}
             disabled={!isUnlocked}
@@ -115,6 +111,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
         ) : (
           <>
             <button
+              type="button"
               className="btn btn-secondary btn-copy"
               onClick={() => handleCopy('appId')}
               disabled={!isUnlocked}
@@ -123,6 +120,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
               🏷️ ID
             </button>
             <button
+              type="button"
               className="btn btn-secondary btn-copy"
               onClick={() => handleCopy('appSecret')}
               disabled={!isUnlocked}
@@ -134,12 +132,18 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
         )}
 
         {!showConfirm ? (
-          <button className="btn btn-danger" onClick={() => setShowConfirm(true)} title="删除">
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => setShowConfirm(true)}
+            title="删除"
+          >
             🗑️
           </button>
         ) : (
           <div className="confirm-actions">
             <button
+              type="button"
               className="btn btn-danger btn-confirm"
               onClick={handleDelete}
               disabled={deleting}
@@ -147,6 +151,7 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
               {deleting ? '...' : '确认'}
             </button>
             <button
+              type="button"
               className="btn btn-secondary btn-confirm"
               onClick={() => setShowConfirm(false)}
               disabled={deleting}
@@ -160,9 +165,6 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
   )
 }
 
-/**
- * 密钥库列表组件
- */
 const PAGE_SIZE = 10
 
 export function VaultList() {
@@ -215,7 +217,6 @@ export function VaultList() {
     if (error) {
       alert('删除失败：' + error.message)
     } else {
-      // 本地同步移除已删除的条目，避免整列表重新加载带来的抖动
       setKeys((prev) => prev.filter((item) => item.id !== id))
     }
   }
@@ -223,7 +224,6 @@ export function VaultList() {
   useEffect(() => {
     fetchKeys()
 
-    // 监听刷新事件（例如在添加新 Key 后）
     const handleRefresh = () => fetchKeys()
     window.addEventListener('vault:refresh', handleRefresh)
     return () => window.removeEventListener('vault:refresh', handleRefresh)
@@ -277,6 +277,7 @@ export function VaultList() {
           {totalPages > 1 && (
             <div className="pagination">
               <button
+                type="button"
                 className="btn btn-ghost"
                 disabled={currentPage <= 1}
                 onClick={() => setPage(currentPage - 1)}
@@ -287,6 +288,7 @@ export function VaultList() {
                 {currentPage} / {totalPages}
               </span>
               <button
+                type="button"
                 className="btn btn-ghost"
                 disabled={currentPage >= totalPages}
                 onClick={() => setPage(currentPage + 1)}

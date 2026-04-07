@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
 import { useToast } from '@/components/providers/ToastProvider'
 import { encrypt } from '@/lib/crypto'
-import { createBrowserClient } from '@/lib/supabase/client'
-import { useAuth } from '@/components/providers/AuthProvider'
 import { logError } from '@/lib/logger'
+import { createBrowserClient } from '@/lib/supabase/client'
 
 /**
  * 密钥录入表单组件
@@ -21,7 +21,6 @@ export function KeyForm() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // 表单数据状态
   const [simpleKey, setSimpleKey] = useState('')
   const [appId, setAppId] = useState('')
   const [appSecret, setAppSecret] = useState('')
@@ -41,13 +40,10 @@ export function KeyForm() {
 
     setLoading(true)
     try {
-      // 1. 准备加密载荷
       const payload = type === 'simple' ? { key: simpleKey } : { appId, appSecret }
 
-      // 2. 客户端加密
       const { ciphertext, iv, salt } = await encrypt(masterPassword, payload)
 
-      // 3. 存储到 Supabase
       const { error } = await supabase.from('api_keys').insert({
         user_id: user.id,
         name,
@@ -59,7 +55,6 @@ export function KeyForm() {
 
       if (error) throw error
 
-      // 4. 重置表单并触发刷新
       setName('')
       setSimpleKey('')
       setAppId('')
@@ -78,12 +73,14 @@ export function KeyForm() {
     <section className="form-card animate-fade-in">
       <div className="tabs">
         <button
+          type="button"
           className={`tab ${type === 'simple' ? 'active' : ''}`}
           onClick={() => setType('simple')}
         >
           单密钥
         </button>
         <button
+          type="button"
           className={`tab ${type === 'pair' ? 'active' : ''}`}
           onClick={() => setType('pair')}
         >

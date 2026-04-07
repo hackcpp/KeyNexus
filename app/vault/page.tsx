@@ -1,7 +1,6 @@
 'use client'
 
-import { KeyForm } from '@/components/KeyForm'
-import { VaultList } from '@/components/VaultList'
+import { KeyForm, VaultList } from '@/components/vault'
 
 export default function VaultPage() {
   return (

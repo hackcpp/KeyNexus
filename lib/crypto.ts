@@ -73,7 +73,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
   )
 }
 
-export interface EncryptedPayload {
+interface EncryptedPayload {
   ciphertext: string
   iv: string
   salt: string

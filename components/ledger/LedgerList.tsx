@@ -2,11 +2,10 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
 import { useToast } from '@/components/providers/ToastProvider'
-import { decrypt } from '@/lib/crypto'
+import { ledgerEntryFromDbRow, type LedgerEntryDbRow } from '@/lib/ledger'
 import { createBrowserClient } from '@/lib/supabase/client'
-import type { LedgerEntryData, LedgerEntryRecord, DecryptedLedgerEntry, LedgerType } from '@/types'
+import type { LedgerEntry, LedgerType } from '@/types'
 
 type TypeFilter = 'all' | LedgerType
 
@@ -14,18 +13,17 @@ const PAGE_SIZE = 10
 
 export function LedgerList() {
   const { user } = useAuth()
-  const { masterPassword } = useMasterPassword()
   const { showToast } = useToast()
   const supabase = useMemo(() => createBrowserClient(), [])
 
-  const [entries, setEntries] = useState<DecryptedLedgerEntry[]>([])
+  const [entries, setEntries] = useState<LedgerEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [page, setPage] = useState(1)
 
   const fetchEntries = useCallback(async () => {
-    if (!user || !masterPassword) return
+    if (!user) return
     const { data, error } = await supabase
       .from('ledger_entries')
       .select('*')
@@ -36,28 +34,14 @@ export function LedgerList() {
       return
     }
 
-    const decrypted = await Promise.all(
-      data.map(async (record: LedgerEntryRecord) => {
-        try {
-          const payload = await decrypt<LedgerEntryData>(masterPassword, {
-            ciphertext: record.encrypted_payload,
-            iv: record.iv,
-            salt: record.salt,
-          })
-          return { ...payload, id: record.id, created_at: record.created_at }
-        } catch {
-          return null
-        }
-      })
-    )
+    const list = data
+      .map((record) => ledgerEntryFromDbRow(record as LedgerEntryDbRow))
+      .filter((e): e is LedgerEntry => e !== null)
+      .sort((a, b) => b.date.localeCompare(a.date))
 
-    setEntries(
-      decrypted
-        .filter((e): e is DecryptedLedgerEntry => e !== null)
-        .sort((a, b) => b.date.localeCompare(a.date))
-    )
+    setEntries(list)
     setLoading(false)
-  }, [user, masterPassword, supabase])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchEntries()

@@ -34,7 +34,7 @@ components/
   AppShell.tsx        # 侧边栏 + 内容区布局
   Sidebar.tsx         # 导航侧边栏
   DashboardOverview   # 总览页
-  KeyForm / VaultList # 密钥模块
+  vault/ (KeyForm, VaultList) # 密钥模块
   ledger/             # 账本模块（LedgerForm, LedgerList, LedgerStats, MonthPicker）
 ```
 

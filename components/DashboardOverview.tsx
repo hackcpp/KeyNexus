@@ -3,17 +3,15 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
-import { decrypt } from '@/lib/crypto'
+import { ledgerEntryFromDbRow, type LedgerEntryDbRow } from '@/lib/ledger'
 import { createBrowserClient } from '@/lib/supabase/client'
-import type { LedgerEntryData, LedgerEntryRecord, DecryptedLedgerEntry } from '@/types'
+import type { LedgerEntry } from '@/types'
 
 export function DashboardOverview() {
   const { user } = useAuth()
-  const { masterPassword } = useMasterPassword()
   const supabase = useMemo(() => createBrowserClient(), [])
 
-  const [entries, setEntries] = useState<DecryptedLedgerEntry[]>([])
+  const [entries, setEntries] = useState<LedgerEntry[]>([])
   const [keyCount, setKeyCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -21,7 +19,7 @@ export function DashboardOverview() {
   const monthPrefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
   const fetchData = useCallback(async () => {
-    if (!user || !masterPassword) return
+    if (!user) return
 
     const [keysRes, entriesRes] = await Promise.all([
       supabase.from('api_keys').select('id', { count: 'exact', head: true }),
@@ -31,25 +29,15 @@ export function DashboardOverview() {
     setKeyCount(keysRes.count || 0)
 
     if (entriesRes.data) {
-      const decrypted = await Promise.all(
-        entriesRes.data.map(async (r: LedgerEntryRecord) => {
-          try {
-            const p = await decrypt<LedgerEntryData>(masterPassword, {
-              ciphertext: r.encrypted_payload,
-              iv: r.iv,
-              salt: r.salt,
-            })
-            return { ...p, id: r.id, created_at: r.created_at }
-          } catch {
-            return null
-          }
-        })
+      setEntries(
+        entriesRes.data
+          .map((r) => ledgerEntryFromDbRow(r as LedgerEntryDbRow))
+          .filter((e): e is LedgerEntry => e !== null)
       )
-      setEntries(decrypted.filter((e): e is DecryptedLedgerEntry => e !== null))
     }
 
     setLoading(false)
-  }, [user, masterPassword, supabase])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchData()
