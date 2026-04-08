@@ -1,4 +1,4 @@
-# SoloBiz 认证与授权方案指南 (Supabase + Google OAuth)
+# SoloBiz 认证与授权方案指南 (Supabase + Google/GitHub OAuth)
 
 本文档详细记录了 SoloBiz 项目中集成的身份认证方案，涵盖了从架构设计到多环境部署的核心逻辑与配置。
 
@@ -6,7 +6,7 @@
 
 ### 1.1 技术栈
 - **认证服务**: Supabase Auth (GoTrue)
-- **身份提供商 (IdP)**: Google OAuth
+- **身份提供商 (IdP)**: Google OAuth、GitHub OAuth
 - **前端框架**: Next.js 16 (App Router)
 - **状态管理**: React Context API (`AuthProvider`)
 
@@ -54,7 +54,7 @@ export function createBrowserClient() {
 
 ---
 
-## 3. 多环境部署配置 (关键)
+## 3. 多认证方式与环境回调配置指引
 
 ### 3.1 Supabase 后台设置
 进入 **Authentication -> URL Configuration**：
@@ -68,16 +68,16 @@ export function createBrowserClient() {
 进入 **APIs & Services -> Credentials**：
 
 1. **已授权的重定向 URI**:
-   - 填入 Supabase 的回调地址：`https://[PROJECT_ID].supabase.co/auth/v1/callback`
+   - 填入 Supabase 的回调地址：`https://[PROJECT_REF].supabase.co/auth/v1/callback`
 2. **已授权的 JavaScript 来源**:
    - 填入本地地址：`http://localhost:3000`
    - 填入生产地址：`https://aiziyou.shop`
 
-### 3.3 GitHub OAuth 配置 (新增)
+### 3.3 GitHub OAuth 配置
 1. **GitHub 端**:
    - 进入 [GitHub Developer Settings](https://github.com/settings/developers) -> **OAuth Apps** -> **New OAuth App**。
    - **Homepage URL**: `https://aiziyou.shop` (本地为 `http://localhost:3000`)。
-   - **Authorization callback URL**: `https://[PROJECT_ID].supabase.co/auth/v1/callback`。
+   - **Authorization callback URL**: `https://[PROJECT_REF].supabase.co/auth/v1/callback`。
 2. **Supabase 端**:
    - 进入 **Authentication -> Providers -> GitHub**。
    - 填入 GitHub 提供的 **Client ID** 和 **Client Secret**。

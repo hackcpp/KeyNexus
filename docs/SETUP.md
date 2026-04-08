@@ -23,15 +23,21 @@ NEXT_PUBLIC_MASTER_PASSWORD=your_secure_master_password
 supabase db push
 ```
 
-迁移文件位于 `supabase/migrations/20250301000000_create_api_keys.sql`。
+迁移文件位于：
 
-### 2.2 配置 Google OAuth
+- `supabase/migrations/20250301000000_create_api_keys.sql`
+- `supabase/migrations/20260405000000_create_ledger_entries.sql`
+
+### 2.2 配置 OAuth（Google / GitHub）
 
 1. 进入 Supabase Dashboard → Authentication → Providers
-2. 启用 Google 提供商
-3. 在 Google Cloud Console 创建 OAuth 2.0 凭据
-4. 将 Supabase 提供的重定向 URL 添加到 Google OAuth 的「已授权的重定向 URI」
+2. 启用 Google 和/或 GitHub 提供商
+3. 在对应平台创建 OAuth 应用
+4. 将 Supabase 提供的回调 URL 加到 OAuth 应用的重定向地址中
 5. 将 Client ID 和 Client Secret 填入 Supabase
+
+> **详细的认证设置参考 @docs/AUTH_GUIDE.md**
+
 
 ## 3. 本地开发
 
@@ -44,8 +50,7 @@ npm run dev
 
 ## 4. Vercel 部署步骤
 
-> **快速访问**：您也可以直接通过以下链接进入项目的域名设置页面：
-> `https://vercel.com/ziyou-projects/key-nexus/settings/domains`
+> **快速访问**：可在 Vercel 项目设置里直接进入域名配置页面（请使用 SoloBiz 对应项目）。
 
 1. **导入仓库**：
    - 在 [Vercel Dashboard](https://vercel.com/dashboard) 点击 **Add New** -> **Project**。
