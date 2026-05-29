@@ -4,7 +4,13 @@ import { useEffect, useState, useMemo } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
 import { useToast } from '@/components/providers/ToastProvider'
-import { decrypt, type PayloadData, type SimpleData, type PairData } from '@/lib/crypto'
+import {
+  decrypt,
+  type PayloadData,
+  type SimpleData,
+  type PairData,
+  type UserPassData,
+} from '@/lib/crypto'
 import { createBrowserClient } from '@/lib/supabase/client'
 import type { EditKeyData } from './KeyForm'
 
@@ -12,7 +18,7 @@ type KeyItemProps = {
   item: {
     id: string
     name: string
-    type: 'simple' | 'pair'
+    type: 'simple' | 'pair' | 'userpass'
     encrypted_payload: string
     iv: string
     salt: string
@@ -48,7 +54,7 @@ function KeyItem({ item, onDelete, onEdit }: KeyItemProps) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [showConfirm, deleting])
 
-  const handleCopy = async (field: 'key' | 'appId' | 'appSecret') => {
+  const handleCopy = async (field: 'key' | 'appId' | 'appSecret' | 'username' | 'password') => {
     if (!masterPassword) return
 
     try {
@@ -63,9 +69,13 @@ function KeyItem({ item, onDelete, onEdit }: KeyItemProps) {
       if (item.type === 'simple') {
         text = (data as SimpleData).key
         fieldLabel = '密钥'
-      } else {
+      } else if (item.type === 'pair') {
         text = field === 'appId' ? (data as PairData).appId : (data as PairData).appSecret
         fieldLabel = field === 'appId' ? 'ID' : '密钥'
+      } else {
+        text =
+          field === 'username' ? (data as UserPassData).username : (data as UserPassData).password
+        fieldLabel = field === 'username' ? '用户名' : '密码'
       }
 
       await navigator.clipboard.writeText(text)
@@ -100,7 +110,7 @@ function KeyItem({ item, onDelete, onEdit }: KeyItemProps) {
       </div>
 
       <div className="actions">
-        {item.type === 'simple' ? (
+        {item.type === 'simple' && (
           <button
             type="button"
             className="btn btn-secondary btn-copy"
@@ -110,7 +120,8 @@ function KeyItem({ item, onDelete, onEdit }: KeyItemProps) {
           >
             🔑 密钥
           </button>
-        ) : (
+        )}
+        {item.type === 'pair' && (
           <>
             <button
               type="button"
@@ -129,6 +140,28 @@ function KeyItem({ item, onDelete, onEdit }: KeyItemProps) {
               title="复制密钥"
             >
               🔒 密钥
+            </button>
+          </>
+        )}
+        {item.type === 'userpass' && (
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary btn-copy"
+              onClick={() => handleCopy('username')}
+              disabled={!isUnlocked}
+              title="复制用户名"
+            >
+              👤 用户名
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-copy"
+              onClick={() => handleCopy('password')}
+              disabled={!isUnlocked}
+              title="复制密码"
+            >
+              🔒 密码
             </button>
           </>
         )}

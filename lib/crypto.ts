@@ -88,7 +88,12 @@ export interface PairData {
   appSecret: string
 }
 
-export type PayloadData = SimpleData | PairData
+export interface UserPassData {
+  username: string
+  password: string
+}
+
+export type PayloadData = SimpleData | PairData | UserPassData
 
 /**
  * 加密函数：将 JSON 数据加密为 Base64 密文

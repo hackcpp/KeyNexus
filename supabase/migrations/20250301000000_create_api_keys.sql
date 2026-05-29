@@ -1,13 +1,14 @@
--- KeyNexus: api_keys 表与 RLS 策略
--- 零知识架构：服务端仅存储密文，不触碰明文
+-- EnigmaVault: api_keys 表与 RLS 策略
+-- 零知识架构：服务端仅存储密文，不触碰明文数据
+-- 支持 simple、pair、userpass 类型
 
 CREATE TABLE IF NOT EXISTS public.api_keys (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   -- 业务侧展示名称，例如 "OpenAI"、"GitHub"
   name TEXT NOT NULL,
-  -- simple: 单密钥；pair: ID+密钥
-  type TEXT NOT NULL CHECK (type IN ('simple', 'pair')),
+  -- simple: 单密钥；pair: ID+密钥；userpass: 用户名/密码格式
+  type TEXT NOT NULL CHECK (type IN ('simple', 'pair', 'userpass')),  
   -- 前端加密后的密文 payload（JSON 字符串）
   encrypted_payload TEXT NOT NULL,
   -- AES-GCM 随机向量与 PBKDF2 salt（均为编码后的字符串）
