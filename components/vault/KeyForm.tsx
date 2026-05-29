@@ -1,29 +1,165 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
 import { useToast } from '@/components/providers/ToastProvider'
-import { encrypt } from '@/lib/crypto'
+import { encrypt, decrypt, type PayloadData, type SimpleData, type PairData } from '@/lib/crypto'
 import { logError } from '@/lib/logger'
 import { createBrowserClient } from '@/lib/supabase/client'
 
+export type EditKeyData = {
+  id: string
+  name: string
+  type: 'simple' | 'pair'
+  encrypted_payload: string
+  iv: string
+  salt: string
+}
+
+type KeyFormProps = {
+  editData?: EditKeyData | null
+  onCancel?: () => void
+}
+
 /**
- * 密钥录入表单组件
+ * 密钥录入表单组件（支持新增和编辑）
  */
-export function KeyForm() {
+export function KeyForm({ editData, onCancel }: KeyFormProps) {
   const { user } = useAuth()
   const { masterPassword } = useMasterPassword()
   const { showToast } = useToast()
   const supabase = useMemo(() => createBrowserClient(), [])
 
-  const [type, setType] = useState<'simple' | 'pair'>('simple')
-  const [name, setName] = useState('')
+  const isEditMode = !!editData
+  const [type, setType] = useState<'simple' | 'pair'>(editData?.type || 'simple')
+  const [name, setName] = useState(editData?.name || '')
   const [loading, setLoading] = useState(false)
 
   const [simpleKey, setSimpleKey] = useState('')
   const [appId, setAppId] = useState('')
   const [appSecret, setAppSecret] = useState('')
+
+  type InitialValues = {
+    name: string
+    type: 'simple' | 'pair'
+    simpleKey: string
+    appId: string
+    appSecret: string
+  }
+
+  const initialValuesRef = useRef<InitialValues>({
+    name: '',
+    type: 'simple',
+    simpleKey: '',
+    appId: '',
+    appSecret: '',
+  })
+
+  // 当 editData 变化时，更新表单状态
+  useEffect(() => {
+    if (editData) {
+      // 编辑模式：初始化基础信息
+      setType(editData.type)
+      setName(editData.name)
+      setSimpleKey('')
+      setAppId('')
+      setAppSecret('')
+      // 保存初始值
+      initialValuesRef.current = {
+        name: editData.name,
+        type: editData.type,
+        simpleKey: '',
+        appId: '',
+        appSecret: '',
+      }
+      // 解密密钥内容（如果 masterPassword 可用）
+      if (masterPassword) {
+        loadEditData()
+      }
+    } else {
+      // 新增模式：清空表单
+      const defaultValues = {
+        name: '',
+        type: 'simple' as const,
+        simpleKey: '',
+        appId: '',
+        appSecret: '',
+      }
+      setType(defaultValues.type)
+      setName(defaultValues.name)
+      setSimpleKey(defaultValues.simpleKey)
+      setAppId(defaultValues.appId)
+      setAppSecret(defaultValues.appSecret)
+      initialValuesRef.current = defaultValues
+    }
+  }, [editData])
+
+  // 检测是否有修改
+  const hasChanges = useMemo(() => {
+    const current = initialValuesRef.current
+    if (current.name !== name) return true
+    if (current.type !== type) return true
+    if (type === 'simple' && current.simpleKey !== simpleKey) return true
+    if (type === 'pair' && (current.appId !== appId || current.appSecret !== appSecret)) return true
+    return false
+  }, [name, type, simpleKey, appId, appSecret])
+
+  // 监听 ESC 键（仅编辑模式）
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isEditMode) {
+        handleCancel()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isEditMode])
+
+  // 处理取消
+  const handleCancel = () => {
+    if (hasChanges) {
+      const confirmCancel = window.confirm('有未保存的修改，确定要关闭吗？')
+      if (!confirmCancel) return
+    }
+    onCancel?.()
+  }
+
+  // 当 masterPassword 可用且在编辑模式时，解密密钥内容
+  useEffect(() => {
+    if (isEditMode && masterPassword && editData) {
+      loadEditData()
+    }
+  }, [isEditMode, masterPassword, editData])
+
+  const loadEditData = async () => {
+    if (!masterPassword || !editData) return
+
+    try {
+      const data = await decrypt<PayloadData>(masterPassword, {
+        ciphertext: editData.encrypted_payload,
+        iv: editData.iv,
+        salt: editData.salt,
+      })
+
+      if (editData.type === 'simple') {
+        const keyValue = (data as SimpleData).key
+        setSimpleKey(keyValue)
+        initialValuesRef.current.simpleKey = keyValue
+      } else {
+        const pairData = data as PairData
+        setAppId(pairData.appId)
+        setAppSecret(pairData.appSecret)
+        initialValuesRef.current.appId = pairData.appId
+        initialValuesRef.current.appSecret = pairData.appSecret
+      }
+    } catch (error) {
+      logError('Failed to decrypt key for editing', error)
+      showToast('解密失败，无法编辑', 'error')
+      onCancel?.()
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,23 +180,48 @@ export function KeyForm() {
 
       const { ciphertext, iv, salt } = await encrypt(masterPassword, payload)
 
-      const { error } = await supabase.from('api_keys').insert({
-        user_id: user.id,
+      if (isEditMode && editData) {
+        const { error } = await supabase
+          .from('api_keys')
+          .update({
+            name,
+            type,
+            encrypted_payload: ciphertext,
+            iv,
+            salt,
+          })
+          .eq('id', editData.id)
+
+        if (error) throw error
+        showToast('已更新')
+      } else {
+        const { error } = await supabase.from('api_keys').insert({
+          user_id: user.id,
+          name,
+          type,
+          encrypted_payload: ciphertext,
+          iv,
+          salt,
+        })
+
+        if (error) throw error
+        showToast('已安全保存')
+      }
+
+      // 保存成功后，更新初始值为当前值
+      initialValuesRef.current = {
         name,
         type,
-        encrypted_payload: ciphertext,
-        iv,
-        salt,
-      })
-
-      if (error) throw error
-
+        simpleKey,
+        appId,
+        appSecret,
+      }
       setName('')
       setSimpleKey('')
       setAppId('')
       setAppSecret('')
       window.dispatchEvent(new CustomEvent('vault:refresh'))
-      showToast('已安全保存')
+      onCancel?.()
     } catch (err) {
       logError('Failed to save key', err)
       showToast('保存失败', 'error')
@@ -71,11 +232,26 @@ export function KeyForm() {
 
   return (
     <section className="form-card animate-fade-in">
+      <div className="form-header">
+        <h3>{isEditMode ? '编辑密钥' : '添加密钥'}</h3>
+        {isEditMode && onCancel && (
+          <button
+            type="button"
+            className="btn btn-ghost btn-cancel"
+            onClick={handleCancel}
+            title="关闭 (ESC)"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
       <div className="tabs">
         <button
           type="button"
           className={`tab ${type === 'simple' ? 'active' : ''}`}
           onClick={() => setType('simple')}
+          disabled={isEditMode}
         >
           单密钥
         </button>
@@ -83,6 +259,7 @@ export function KeyForm() {
           type="button"
           className={`tab ${type === 'pair' ? 'active' : ''}`}
           onClick={() => setType('pair')}
+          disabled={isEditMode}
         >
           ID + 密钥
         </button>
@@ -160,7 +337,7 @@ export function KeyForm() {
           style={{ width: '100%', marginTop: '8px' }}
           disabled={loading || (type === 'simple' ? !simpleKey : !appId || !appSecret) || !name}
         >
-          {loading ? '保存中...' : '安全保存'}
+          {loading ? '保存中...' : isEditMode ? '保存修改' : '安全保存'}
         </button>
       </form>
     </section>

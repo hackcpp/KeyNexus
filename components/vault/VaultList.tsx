@@ -6,6 +6,7 @@ import { useMasterPassword } from '@/components/providers/MasterPasswordProvider
 import { useToast } from '@/components/providers/ToastProvider'
 import { decrypt, type PayloadData, type SimpleData, type PairData } from '@/lib/crypto'
 import { createBrowserClient } from '@/lib/supabase/client'
+import type { EditKeyData } from './KeyForm'
 
 type KeyItemProps = {
   item: {
@@ -18,9 +19,10 @@ type KeyItemProps = {
     created_at: string
   }
   onDelete: (id: string) => Promise<void>
+  onEdit: (item: EditKeyData) => void
 }
 
-function KeyItem({ item, onDelete }: KeyItemProps) {
+function KeyItem({ item, onDelete, onEdit }: KeyItemProps) {
   const { showToast } = useToast()
   const { masterPassword, isUnlocked } = useMasterPassword()
   const [deleting, setDeleting] = useState(false)
@@ -131,6 +133,24 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
           </>
         )}
 
+        <button
+          type="button"
+          className="btn btn-secondary btn-edit"
+          onClick={() =>
+            onEdit({
+              id: item.id,
+              name: item.name,
+              type: item.type,
+              encrypted_payload: item.encrypted_payload,
+              iv: item.iv,
+              salt: item.salt,
+            })
+          }
+          title="编辑"
+        >
+          ✏️
+        </button>
+
         {!showConfirm ? (
           <button
             type="button"
@@ -167,7 +187,11 @@ function KeyItem({ item, onDelete }: KeyItemProps) {
 
 const PAGE_SIZE = 10
 
-export function VaultList() {
+type VaultListProps = {
+  onEdit: (item: EditKeyData) => void
+}
+
+export function VaultList({ onEdit }: VaultListProps) {
   const { user } = useAuth()
   const [keys, setKeys] = useState<KeyItemProps['item'][]>([])
   const [loading, setLoading] = useState(true)
@@ -271,7 +295,7 @@ export function VaultList() {
         <>
           <div className="vault-grid">
             {pagedKeys.map((item) => (
-              <KeyItem key={item.id} item={item} onDelete={handleDeleteKey} />
+              <KeyItem key={item.id} item={item} onDelete={handleDeleteKey} onEdit={onEdit} />
             ))}
           </div>
           {totalPages > 1 && (

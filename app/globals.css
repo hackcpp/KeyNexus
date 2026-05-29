@@ -248,6 +248,22 @@ main::before {
   overflow: hidden;
 }
 
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.form-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
 .form-card::before {
   content: '';
   position: absolute;
