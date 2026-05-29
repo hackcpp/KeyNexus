@@ -36,10 +36,6 @@ export function MasterPasswordProvider({ children }: { children: React.ReactNode
   )
 }
 
-/**
- * 主密码 Hook
- * 获取主密码上下文，必须在 MasterPasswordProvider 内部使用
- */
 export function useMasterPassword() {
   const ctx = useContext(MasterPasswordContext)
   if (!ctx) throw new Error('useMasterPassword must be used within MasterPasswordProvider')
