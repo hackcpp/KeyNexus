@@ -1,50 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@500;700&display=swap');
+@import './styles/variables.css';
 
-:root {
-  /* 主色调 */
-  --bg: #0e0e12;
-  --bg-card: #161620;
-  --bg-input: #1e1e28;
-  --bg-elevated: #262630;
-  --border: #35354a;
-  --border-hover: #4a4a60;
-
-  /* 文本 */
-  --text: #ededf2;
-  --text-muted: #9090a0;
-  --text-dim: #6a6a7a;
-
-  /* Accent - 金色/琥珀色 */
-  --accent: #f59e0b;
-  --accent-hover: #fbbf24;
-  --accent-subtle: rgba(245, 158, 11, 0.15);
-  --accent-glow: rgba(245, 158, 11, 0.4);
-
-  /* 辅助色 */
-  --danger: #ef4444;
-  --danger-subtle: rgba(239, 68, 68, 0.15);
-  --success: #10b981;
-  --success-subtle: rgba(16, 185, 129, 0.15);
-
-  /* 渐变色 */
-  --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --gradient-card: linear-gradient(180deg, #161620 0%, #121218 100%);
-  --gradient-bg: radial-gradient(ellipse at 50% 0%, #1e1e2a 0%, #0e0e12 60%);
-
-  /* 尺寸与效果 */
-  --radius: 16px;
-  --radius-sm: 10px;
-  --radius-xs: 6px;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 40px var(--accent-glow);
-
-  /* 字体 */
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-}
-
+/* ========================================
+   Global app styles
+======================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -103,8 +61,98 @@ main::before {
 }
 
 /* ========================================
-   Header
+   Layout
 ======================================== */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-content {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 960px;
+  overflow-y: auto;
+}
+
+.sidebar {
+  width: 220px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  padding: 0 20px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-logo {
+  color: var(--accent);
+  font-size: 20px;
+}
+
+.sidebar-title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-xs);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+.sidebar-link:hover {
+  background: var(--bg-input);
+  opacity: 1;
+}
+
+.sidebar-link.active {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 600;
+  opacity: 1;
+}
+
+.sidebar-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -130,6 +178,21 @@ main::before {
   color: var(--text-muted);
   font-family: var(--font-mono);
   letter-spacing: -0.02em;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.section-subtitle {
+  font-size: 16px;
+  font-family: var(--font-mono);
+  margin-bottom: 16px;
+  color: var(--text-muted);
 }
 
 /* ========================================
@@ -164,7 +227,6 @@ main::before {
   opacity: 1;
 }
 
-/* Primary Button - 金色渐变 */
 .btn-primary {
   background: var(--gradient-accent);
   color: #000;
@@ -180,7 +242,6 @@ main::before {
   transform: translateY(0);
 }
 
-/* Secondary Button */
 .btn-secondary {
   background: var(--bg-input);
   color: var(--text);
@@ -193,7 +254,6 @@ main::before {
   transform: translateY(-1px);
 }
 
-/* Ghost Button */
 .btn-ghost {
   background: transparent;
   color: var(--text-muted);
@@ -206,7 +266,6 @@ main::before {
   border-color: var(--border);
 }
 
-/* Danger Button */
 .btn-danger {
   background: transparent;
   color: var(--danger);
@@ -219,13 +278,20 @@ main::before {
   transform: translateY(-1px);
 }
 
-/* Copy Button */
 .btn-copy {
   width: 100px;
   flex-shrink: 0;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 500;
+}
+
+.btn-confirm {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: auto;
+  border-radius: 6px;
 }
 
 .btn:disabled {
@@ -235,7 +301,7 @@ main::before {
 }
 
 /* ========================================
-   Form Card
+   Forms
 ======================================== */
 .form-card {
   background: var(--gradient-card);
@@ -274,7 +340,6 @@ main::before {
   background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.3), transparent);
 }
 
-/* Tabs */
 .tabs {
   display: flex;
   gap: 4px;
@@ -316,7 +381,6 @@ main::before {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Form Groups */
 .form-group {
   margin-bottom: 20px;
 }
@@ -336,7 +400,6 @@ main::before {
   display: grid;
 }
 
-/* Inputs */
 .input {
   width: 100%;
   background: var(--bg-input);
@@ -363,7 +426,6 @@ main::before {
   border-color: var(--border-hover);
 }
 
-/* Input with toggle button */
 .input-with-toggle {
   position: relative;
 }
@@ -400,8 +462,153 @@ main::before {
   color: var(--accent-hover);
 }
 
+input[type='date'].input {
+  cursor: pointer;
+}
+
+input[type='date'].input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+input[type='date'].input::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.9);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7a85' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
 /* ========================================
-   Vault Section
+   Shared cards and lists
+======================================== */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card,
+.quick-link,
+.chart-section,
+.empty-state,
+.key-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.stat-card {
+  padding: 20px;
+}
+
+.stat-card-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.stat-card-value {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.stat-card-value.income {
+  color: var(--success);
+}
+
+.stat-card-value.expense {
+  color: var(--danger);
+}
+
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.quick-link {
+  padding: 24px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-link-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.quick-link-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.quick-link-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.chart-section {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+.empty-state {
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--text-muted);
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-state::before {
+  content: '✦';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  color: var(--accent);
+  opacity: 0.3;
+}
+
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   Vault section
 ======================================== */
 .vault-section {
   position: relative;
@@ -451,18 +658,13 @@ main::before {
   white-space: nowrap;
 }
 
-/* Vault Grid */
 .vault-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* Key Card */
 .key-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
   padding: 20px;
   display: flex;
   align-items: center;
@@ -531,7 +733,6 @@ main::before {
   color: var(--accent);
 }
 
-/* Actions */
 .actions {
   display: flex;
   align-items: center;
@@ -550,16 +751,130 @@ main::before {
   animation: fadeIn 0.2s ease-out;
 }
 
-.btn-confirm {
-  padding: 6px 12px;
-  font-size: 11px;
+/* ========================================
+   Ledger section
+======================================== */
+.ledger-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ledger-entry {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.ledger-entry:hover {
+  border-color: var(--border-hover);
+}
+
+.ledger-entry-date {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.ledger-entry-category {
+  font-size: 13px;
+  background: var(--bg-input);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.ledger-entry-note {
+  font-size: 14px;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ledger-entry-amount {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.ledger-entry-amount.income {
+  color: var(--success);
+}
+
+.ledger-entry-amount.expense {
+  color: var(--danger);
+}
+
+.month-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.month-picker-label {
+  font-size: 16px;
   font-weight: 600;
-  min-width: auto;
-  border-radius: 6px;
+  font-family: var(--font-mono);
+  min-width: 120px;
+  text-align: center;
+}
+
+.category-section {
+  margin-bottom: 28px;
+}
+
+.category-section-title {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.category-tag button {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+}
+
+.category-tag button:hover {
+  color: var(--danger);
 }
 
 /* ========================================
-   Login Page
+   Login page
 ======================================== */
 .login-page {
   min-height: 100vh;
@@ -666,37 +981,7 @@ main::before {
 }
 
 /* ========================================
-   Empty State
-======================================== */
-.empty-state {
-  padding: 60px 40px;
-  text-align: center;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1px dashed var(--border);
-  color: var(--text-muted);
-  position: relative;
-  overflow: hidden;
-}
-
-.empty-state::before {
-  content: '✦';
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  color: var(--accent);
-  opacity: 0.3;
-}
-
-.empty-state p {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* ========================================
-   Toast Notifications
+   Toast notifications
 ======================================== */
 .toast {
   position: fixed;
@@ -751,7 +1036,7 @@ main::before {
 }
 
 /* ========================================
-   Animations
+   Animations and utilities
 ======================================== */
 @keyframes fadeIn {
   from {
@@ -769,14 +1054,12 @@ main::before {
   opacity: 0;
 }
 
-/* Staggered animation delays */
 .animate-fade-in:nth-child(1) { animation-delay: 0.05s; }
 .animate-fade-in:nth-child(2) { animation-delay: 0.1s; }
 .animate-fade-in:nth-child(3) { animation-delay: 0.15s; }
 .animate-fade-in:nth-child(4) { animation-delay: 0.2s; }
 .animate-fade-in:nth-child(5) { animation-delay: 0.25s; }
 
-/* Loading State */
 .loading {
   text-align: center;
   padding: 60px 40px;
@@ -798,398 +1081,6 @@ main::before {
 }
 
 /* ========================================
-   App Shell & Sidebar
-======================================== */
-.app-shell {
-  display: flex;
-  min-height: 100vh;
-}
-
-.app-content {
-  flex: 1;
-  padding: 32px 40px;
-  max-width: 960px;
-  overflow-y: auto;
-}
-
-.sidebar {
-  width: 220px;
-  background: var(--bg-card);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  flex-shrink: 0;
-}
-
-.sidebar-brand {
-  padding: 0 20px;
-  margin-bottom: 32px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sidebar-logo {
-  color: var(--accent);
-  font-size: 20px;
-}
-
-.sidebar-title {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.sidebar-nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 0 8px;
-}
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-xs);
-  color: var(--text);
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  opacity: 0.7;
-  transition: all 0.2s;
-}
-
-.sidebar-link:hover {
-  background: var(--bg-input);
-  opacity: 1;
-}
-
-.sidebar-link.active {
-  background: var(--accent-subtle);
-  color: var(--accent);
-  font-weight: 600;
-  opacity: 1;
-}
-
-.sidebar-icon {
-  width: 20px;
-  text-align: center;
-  font-size: 15px;
-}
-
-.sidebar-footer {
-  padding: 12px;
-  border-top: 1px solid var(--border);
-  margin-top: auto;
-}
-
-/* ========================================
-   Page Elements
-======================================== */
-.page-title {
-  font-size: 26px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  letter-spacing: -0.02em;
-  margin-bottom: 24px;
-}
-
-.section-subtitle {
-  font-size: 16px;
-  font-family: var(--font-mono);
-  margin-bottom: 16px;
-  color: var(--text-muted);
-}
-
-/* ========================================
-   Stat Cards
-======================================== */
-.stat-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.stat-card-label {
-  font-size: 13px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
-
-.stat-card-value {
-  font-size: 26px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-}
-
-.stat-card-value.income {
-  color: var(--success);
-}
-
-.stat-card-value.expense {
-  color: var(--danger);
-}
-
-/* ========================================
-   Ledger Entries
-======================================== */
-.ledger-entries {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ledger-entry {
-  display: flex;
-  align-items: center;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  gap: 12px;
-  transition: border-color 0.2s;
-}
-
-.ledger-entry:hover {
-  border-color: var(--border-hover);
-}
-
-.ledger-entry-date {
-  font-size: 14px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  min-width: 90px;
-  flex-shrink: 0;
-}
-
-.ledger-entry-category {
-  font-size: 13px;
-  background: var(--bg-input);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  flex-shrink: 0;
-}
-
-.ledger-entry-note {
-  font-size: 14px;
-  color: var(--text-muted);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ledger-entry-amount {
-  font-size: 16px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  flex-shrink: 0;
-}
-
-.ledger-entry-amount.income {
-  color: var(--success);
-}
-
-.ledger-entry-amount.expense {
-  color: var(--danger);
-}
-
-/* ========================================
-   Chart Sections
-======================================== */
-.chart-section {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 24px;
-}
-
-.chart-title {
-  font-size: 14px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  margin-bottom: 16px;
-  color: var(--text-muted);
-}
-
-/* ========================================
-   Month Picker
-======================================== */
-.month-picker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.month-picker-label {
-  font-size: 16px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  min-width: 120px;
-  text-align: center;
-}
-
-/* ========================================
-   Category Manager
-======================================== */
-.category-section {
-  margin-bottom: 28px;
-}
-
-.category-section-title {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-  font-family: var(--font-mono);
-}
-
-.category-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.category-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 13px;
-}
-
-.category-tag button {
-  background: none;
-  border: none;
-  color: var(--text-dim);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 0;
-  line-height: 1;
-}
-
-.category-tag button:hover {
-  color: var(--danger);
-}
-
-/* ========================================
-   Dashboard Quick Links
-======================================== */
-.quick-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.quick-link {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  text-decoration: none;
-  color: var(--text);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.quick-link:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.quick-link-icon {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.quick-link-title {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.quick-link-desc {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-/* ========================================
-   Pagination
-======================================== */
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.pagination-info {
-  font-size: 13px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  min-width: 60px;
-  text-align: center;
-}
-
-/* ========================================
-   Date Input
-======================================== */
-input[type='date'].input {
-  cursor: pointer;
-}
-
-input[type='date'].input::-webkit-calendar-picker-indicator {
-  filter: invert(0.7);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-input[type='date'].input::-webkit-calendar-picker-indicator:hover {
-  filter: invert(0.9);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* ========================================
-   Select Input (shared)
-======================================== */
-select.input {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7a85' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-}
-
-/* ========================================
    Responsive
 ======================================== */
 @media (max-width: 768px) {
@@ -1201,10 +1092,7 @@ select.input {
     padding: 24px 16px;
   }
 
-  .stat-cards {
-    grid-template-columns: 1fr;
-  }
-
+  .stat-cards,
   .quick-links {
     grid-template-columns: 1fr;
   }

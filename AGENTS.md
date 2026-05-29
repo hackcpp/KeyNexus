@@ -27,27 +27,32 @@ SoloBiz 是一人公司的智能管理系统，部署于 Vercel，使用 Supabas
 app/
   layout.tsx          # 根布局，集成 ClientLayout（Provider 树 + 登录守卫）
   page.tsx            # 系统总览（Dashboard）
-  vault/page.tsx      # 密钥管理
-  ledger/page.tsx     # 收支账本（统计 + 记账 tab 切换）
-  globals.css         # 全局样式
-components/
-  ClientLayout.tsx    # Toast → Auth → MasterPassword Provider 包装
-  AppShell.tsx        # 侧边栏 + 内容区布局
-  Sidebar.tsx         # 导航侧边栏
-  DashboardOverview.tsx # 总览页
-  LoginPage.tsx       # 登录页
-  vault/
-    KeyForm.tsx       # 密钥表单
-    VaultList.tsx     # 密钥列表
+  globals.css         # 全局样式（全局 class + imports）
+  styles/variables.css # 主题变量与字体导入
   ledger/
-    LedgerForm.tsx    # 账本表单
-    LedgerList.tsx    # 账本列表
-    LedgerStats.tsx   # 账本统计
+    page.tsx          # 收支账本页面（记账 + 统计）
+  vault/
+    page.tsx          # 密钥管理（Vault）
+
+components/
+  ClientLayout.tsx    # Provider 树：Toast, Auth, MasterPassword 等
+  AppShell.tsx        # 侧栏 + 内容区布局（app shell）
+  Sidebar.tsx         # 导航侧边栏
+  DashboardOverview.tsx # Dashboard 概览组件
+  LoginPage.tsx       # 登录页组件
+  vault/
+    KeyForm.tsx       # 密钥输入 / 编辑表单
+    VaultList.tsx     # 密钥列表视图
+  ledger/
+    LedgerForm.tsx    # 账本记录表单
+    LedgerList.tsx    # 账本列表视图
+    LedgerStats.tsx   # 账本统计（图表与汇总）
     MonthPicker.tsx   # 月份选择器
-  providers/
-    ToastProvider.tsx # Toast 提供者
-    AuthProvider.tsx  # 认证提供者
-    MasterPasswordProvider.tsx # 主密码提供者
+
+providers/
+  ToastProvider.tsx   # 通知 / toast 提供者
+  AuthProvider.tsx    # Supabase Auth 封装
+  MasterPasswordProvider.tsx # 主密码与密钥派生
 ```
 
 ### Security Model
