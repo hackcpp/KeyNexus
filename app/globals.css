@@ -301,8 +301,13 @@ main::before {
   letter-spacing: -0.02em;
 }
 
-.tab:hover:not(.active) {
+.tab:hover:not(.active):not(:disabled) {
   color: var(--text-dim);
+}
+
+.tab:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .tab.active {
@@ -356,6 +361,43 @@ main::before {
 
 .input:hover:not(:focus) {
   border-color: var(--border-hover);
+}
+
+/* Input with toggle button */
+.input-with-toggle {
+  position: relative;
+}
+
+.input-with-toggle .input {
+  padding-right: 48px;
+}
+
+.toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  color: var(--text-dim);
+}
+
+.toggle-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.toggle-btn.visible {
+  color: var(--accent);
+}
+
+.toggle-btn.visible:hover {
+  color: var(--accent-hover);
 }
 
 /* ========================================

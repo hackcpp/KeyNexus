@@ -39,6 +39,8 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
   const [simpleKey, setSimpleKey] = useState('')
   const [appId, setAppId] = useState('')
   const [appSecret, setAppSecret] = useState('')
+  const [showSimpleKey, setShowSimpleKey] = useState(false)
+  const [showAppSecret, setShowAppSecret] = useState(false)
 
   type InitialValues = {
     name: string
@@ -287,15 +289,37 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
           >
             <div className="form-group">
               <label>API 密钥</label>
-              <input
-                className="input"
-                type="password"
-                placeholder="sk-..."
-                value={simpleKey}
-                onChange={(e) => setSimpleKey(e.target.value)}
-                required={type === 'simple'}
-                tabIndex={type === 'simple' ? 0 : -1}
-              />
+              <div className="input-with-toggle">
+                <input
+                  className="input"
+                  type={showSimpleKey ? 'text' : 'password'}
+                  placeholder="sk-..."
+                  value={simpleKey}
+                  onChange={(e) => setSimpleKey(e.target.value)}
+                  required={type === 'simple'}
+                  tabIndex={type === 'simple' ? 0 : -1}
+                />
+                <button
+                  type="button"
+                  className={`toggle-btn ${showSimpleKey ? 'visible' : ''}`}
+                  onClick={() => setShowSimpleKey(!showSimpleKey)}
+                  title={showSimpleKey ? '隐藏密钥' : '显示密钥'}
+                >
+                  {showSimpleKey ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13.87 18.82a10.05 10.05 0 0 1-1.27 2.81"/>
+                      <path d="M9.87 14.82A6.03 6.03 0 0 1 9 14c0-2.21 1.79-4 4-4 1.17 0 2.2.58 2.87 1.5"/>
+                      <path d="m15 12-3-3-3 3"/>
+                      <path d="M12 19c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
           <div
@@ -318,15 +342,37 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
             </div>
             <div className="form-group">
               <label>应用密钥</label>
-              <input
-                className="input"
-                type="password"
-                placeholder="输入密钥"
-                value={appSecret}
-                onChange={(e) => setAppSecret(e.target.value)}
-                required={type === 'pair'}
-                tabIndex={type === 'pair' ? 0 : -1}
-              />
+              <div className="input-with-toggle">
+                <input
+                  className="input"
+                  type={showAppSecret ? 'text' : 'password'}
+                  placeholder="输入密钥"
+                  value={appSecret}
+                  onChange={(e) => setAppSecret(e.target.value)}
+                  required={type === 'pair'}
+                  tabIndex={type === 'pair' ? 0 : -1}
+                />
+                <button
+                  type="button"
+                  className={`toggle-btn ${showAppSecret ? 'visible' : ''}`}
+                  onClick={() => setShowAppSecret(!showAppSecret)}
+                  title={showAppSecret ? '隐藏密钥' : '显示密钥'}
+                >
+                  {showAppSecret ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13.87 18.82a10.05 10.05 0 0 1-1.27 2.81"/>
+                      <path d="M9.87 14.82A6.03 6.03 0 0 1 9 14c0-2.21 1.79-4 4-4 1.17 0 2.2.58 2.87 1.5"/>
+                      <path d="m15 12-3-3-3 3"/>
+                      <path d="M12 19c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
