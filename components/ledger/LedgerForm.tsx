@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { useToast } from '@/components/providers/ToastProvider'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { Tabs } from '@/components/ui'
 import type { LedgerEntryInput, LedgerType } from '@/types'
 
 function todayString() {
@@ -67,25 +68,17 @@ export function LedgerForm() {
 
   return (
     <section className="form-card animate-fade-in">
-      <div className="tabs">
-        <button
-          type="button"
-          className={`tab ${type === 'income' ? 'active' : ''}`}
-          onClick={() => setType('income')}
-        >
-          收入
-        </button>
-        <button
-          type="button"
-          className={`tab ${type === 'expense' ? 'active' : ''}`}
-          onClick={() => setType('expense')}
-        >
-          支出
-        </button>
-      </div>
+      <Tabs
+        tabs={[
+          { label: '收入', value: 'income' },
+          { label: '支出', value: 'expense' },
+        ]}
+        activeValue={type}
+        onTabChange={setType}
+      />
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div className="grid-2col">
           <div className="form-group">
             <label>金额</label>
             <input
@@ -133,8 +126,7 @@ export function LedgerForm() {
 
         <button
           type="submit"
-          className="btn btn-primary"
-          style={{ width: '100%' }}
+          className="btn btn-primary btn-full"
           disabled={saving || !amount}
         >
           {saving ? '保存中...' : `记录${type === 'income' ? '收入' : '支出'}`}

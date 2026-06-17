@@ -14,6 +14,7 @@ import {
 } from '@/lib/crypto'
 import { logError } from '@/lib/logger'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { Tabs, PasswordInput } from '@/components/ui'
 
 export type EditKeyData = {
   id: string
@@ -282,32 +283,15 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
         )}
       </div>
 
-      <div className="tabs">
-        <button
-          type="button"
-          className={`tab ${type === 'simple' ? 'active' : ''}`}
-          onClick={() => setType('simple')}
-          disabled={isEditMode}
-        >
-          单密钥
-        </button>
-        <button
-          type="button"
-          className={`tab ${type === 'pair' ? 'active' : ''}`}
-          onClick={() => setType('pair')}
-          disabled={isEditMode}
-        >
-          ID + 密钥
-        </button>
-        <button
-          type="button"
-          className={`tab ${type === 'userpass' ? 'active' : ''}`}
-          onClick={() => setType('userpass')}
-          disabled={isEditMode}
-        >
-          用户名/密码
-        </button>
-      </div>
+      <Tabs<'simple' | 'pair' | 'userpass'>
+        tabs={[
+          { label: '单密钥', value: 'simple' as const },
+          { label: 'ID + 密钥', value: 'pair' as const },
+          { label: '用户名/密码', value: 'userpass' as const },
+        ].map((t) => ({ ...t, disabled: isEditMode }))}
+        activeValue={type}
+        onTabChange={setType}
+      />
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -331,55 +315,16 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
           >
             <div className="form-group">
               <label>API 密钥</label>
-              <div className="input-with-toggle">
-                <input
-                  className="input"
-                  type={showSimpleKey ? 'text' : 'password'}
-                  placeholder="sk-..."
-                  value={simpleKey}
-                  onChange={(e) => setSimpleKey(e.target.value)}
-                  required={type === 'simple'}
-                  tabIndex={type === 'simple' ? 0 : -1}
-                />
-                <button
-                  type="button"
-                  className={`toggle-btn ${showSimpleKey ? 'visible' : ''}`}
-                  onClick={() => setShowSimpleKey(!showSimpleKey)}
-                  title={showSimpleKey ? '隐藏密钥' : '显示密钥'}
-                >
-                  {showSimpleKey ? (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M13.87 18.82a10.05 10.05 0 0 1-1.27 2.81" />
-                      <path d="M9.87 14.82A6.03 6.03 0 0 1 9 14c0-2.21 1.79-4 4-4 1.17 0 2.2.58 2.87 1.5" />
-                      <path d="m15 12-3-3-3 3" />
-                      <path d="M12 19c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7" />
-                    </svg>
-                  )}
-                </button>
-              </div>
+              <PasswordInput
+                className="input"
+                placeholder="sk-..."
+                value={simpleKey}
+                onChange={(e) => setSimpleKey(e.target.value)}
+                required={type === 'simple'}
+                tabIndex={type === 'simple' ? 0 : -1}
+                visible={showSimpleKey}
+                onToggle={() => setShowSimpleKey(!showSimpleKey)}
+              />
             </div>
           </div>
           <div
@@ -402,55 +347,16 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
             </div>
             <div className="form-group">
               <label>应用密钥</label>
-              <div className="input-with-toggle">
-                <input
-                  className="input"
-                  type={showAppSecret ? 'text' : 'password'}
-                  placeholder="输入密钥"
-                  value={appSecret}
-                  onChange={(e) => setAppSecret(e.target.value)}
-                  required={type === 'pair'}
-                  tabIndex={type === 'pair' ? 0 : -1}
-                />
-                <button
-                  type="button"
-                  className={`toggle-btn ${showAppSecret ? 'visible' : ''}`}
-                  onClick={() => setShowAppSecret(!showAppSecret)}
-                  title={showAppSecret ? '隐藏密钥' : '显示密钥'}
-                >
-                  {showAppSecret ? (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M13.87 18.82a10.05 10.05 0 0 1-1.27 2.81" />
-                      <path d="M9.87 14.82A6.03 6.03 0 0 1 9 14c0-2.21 1.79-4 4-4 1.17 0 2.2.58 2.87 1.5" />
-                      <path d="m15 12-3-3-3 3" />
-                      <path d="M12 19c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7" />
-                    </svg>
-                  )}
-                </button>
-              </div>
+              <PasswordInput
+                className="input"
+                placeholder="输入密钥"
+                value={appSecret}
+                onChange={(e) => setAppSecret(e.target.value)}
+                required={type === 'pair'}
+                tabIndex={type === 'pair' ? 0 : -1}
+                visible={showAppSecret}
+                onToggle={() => setShowAppSecret(!showAppSecret)}
+              />
             </div>
           </div>
           <div
@@ -474,63 +380,23 @@ export function KeyForm({ editData, onCancel }: KeyFormProps) {
             </div>
             <div className="form-group">
               <label>密码</label>
-              <div className="input-with-toggle">
-                <input
-                  className="input"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="输入密码"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required={type === 'userpass'}
-                  tabIndex={type === 'userpass' ? 0 : -1}
-                />
-                <button
-                  type="button"
-                  className={`toggle-btn ${showPassword ? 'visible' : ''}`}
-                  onClick={() => setShowPassword(!showPassword)}
-                  title={showPassword ? '隐藏密码' : '显示密码'}
-                >
-                  {showPassword ? (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M13.87 18.82a10.05 10.05 0 0 1-1.27 2.81" />
-                      <path d="M9.87 14.82A6.03 6.03 0 0 1 9 14c0-2.21 1.79-4 4-4 1.17 0 2.2.58 2.87 1.5" />
-                      <path d="m15 12-3-3-3 3" />
-                      <path d="M12 19c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7" />
-                    </svg>
-                  )}
-                </button>
-              </div>
+              <PasswordInput
+                className="input"
+                placeholder="输入密码"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required={type === 'userpass'}
+                tabIndex={type === 'userpass' ? 0 : -1}
+                visible={showPassword}
+                onToggle={() => setShowPassword(!showPassword)}
+              />
             </div>
           </div>
         </div>
 
         <button
           type="submit"
-          className="btn btn-primary"
-          style={{ width: '100%', marginTop: '8px' }}
+          className="btn btn-primary btn-full"
           disabled={
             loading ||
             (type === 'simple'

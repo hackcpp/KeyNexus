@@ -4,32 +4,27 @@ import { useState } from 'react'
 import { LedgerForm } from '@/components/ledger/LedgerForm'
 import { LedgerList } from '@/components/ledger/LedgerList'
 import { LedgerStats } from '@/components/ledger/LedgerStats'
+import { Tabs } from '@/components/ui'
+
+type ViewTab = 'stats' | 'records'
 
 export default function LedgerPage() {
-  const [tab, setTab] = useState<'records' | 'stats'>('stats')
+  const [tab, setTab] = useState<ViewTab>('stats')
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
+      <div className="stats-header">
         <h1 className="page-title" style={{ marginBottom: 0 }}>
           收支账本
         </h1>
-        <div className="tabs" style={{ marginBottom: 0, width: 'auto' }}>
-          <button
-            type="button"
-            className={`tab ${tab === 'stats' ? 'active' : ''}`}
-            onClick={() => setTab('stats')}
-          >
-            统计
-          </button>
-          <button
-            type="button"
-            className={`tab ${tab === 'records' ? 'active' : ''}`}
-            onClick={() => setTab('records')}
-          >
-            记账
-          </button>
-        </div>
+        <Tabs<ViewTab>
+          tabs={[
+            { label: '统计', value: 'stats' },
+            { label: '记账', value: 'records' },
+          ]}
+          activeValue={tab}
+          onTabChange={setTab}
+        />
       </div>
 
       {tab === 'records' ? (

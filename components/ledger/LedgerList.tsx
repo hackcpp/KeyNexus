@@ -6,6 +6,7 @@ import { useToast } from '@/components/providers/ToastProvider'
 import { ledgerEntryFromDbRow, type LedgerEntryDbRow } from '@/lib/ledger'
 import { createBrowserClient } from '@/lib/supabase/client'
 import type { LedgerEntry, LedgerType } from '@/types'
+import { Tabs, Pagination, EmptyState, Spinner } from '@/components/ui'
 
 type TypeFilter = 'all' | LedgerType
 
@@ -50,6 +51,8 @@ export function LedgerList() {
     return () => window.removeEventListener('ledger:refresh', handler)
   }, [fetchEntries])
 
+  const [deletingEntry, setDeletingEntry] = useState<string | null>(null)
+
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from('ledger_entries').delete().eq('id', id)
     if (error) {
@@ -58,6 +61,7 @@ export function LedgerList() {
       setEntries((prev) => prev.filter((e) => e.id !== id))
       showToast('已删除')
     }
+    setDeletingEntry(null)
   }
 
   const filtered = useMemo(() => {
@@ -77,76 +81,43 @@ export function LedgerList() {
   const pagedEntries = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   if (loading) {
-    return (
-      <div className="loading">
-        <div className="loading-spinner" />
-      </div>
-    )
+    return <Spinner />
   }
 
   return (
     <section className="vault-section">
       <div className="vault-header">
         <h2 className="vault-title">记录列表</h2>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: '12px',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <div className="tabs" style={{ marginBottom: 0, width: 'auto' }}>
-            <button
-              type="button"
-              className={`tab ${typeFilter === 'all' ? 'active' : ''}`}
-              onClick={() => {
-                setTypeFilter('all')
-                setPage(1)
-              }}
-            >
-              全部
-            </button>
-            <button
-              type="button"
-              className={`tab ${typeFilter === 'expense' ? 'active' : ''}`}
-              onClick={() => {
-                setTypeFilter('expense')
-                setPage(1)
-              }}
-            >
-              支出
-            </button>
-            <button
-              type="button"
-              className={`tab ${typeFilter === 'income' ? 'active' : ''}`}
-              onClick={() => {
-                setTypeFilter('income')
-                setPage(1)
-              }}
-            >
-              收入
-            </button>
-          </div>
+        <div className="controls-row">
+          <Tabs<TypeFilter>
+            tabs={[
+              { label: '全部', value: 'all' },
+              { label: '支出', value: 'expense' },
+              { label: '收入', value: 'income' },
+            ]}
+            activeValue={typeFilter}
+            onTabChange={(v) => {
+              setTypeFilter(v)
+              setPage(1)
+            }}
+          />
           <input
-            className="input"
+            className="input input-pill"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
               setPage(1)
             }}
             placeholder="搜索分类/备注..."
-            style={{ maxWidth: '200px', fontSize: '12px', borderRadius: '999px' }}
           />
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          <span className="stat-counter">
             {filtered.length} / {entries.length} 条
           </span>
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="empty-state">
+        <EmptyState>
           {entries.length === 0
             ? '暂无记录，添加第一笔收支吧！'
             : search.trim()
@@ -156,7 +127,7 @@ export function LedgerList() {
                 : typeFilter === 'income'
                   ? '暂无收入记录'
                   : '未找到匹配的记录'}
-        </div>
+        </EmptyState>
       ) : (
         <>
           <div className="ledger-entries">
@@ -170,37 +141,40 @@ export function LedgerList() {
                   {entry.amount.toFixed(2)}
                 </span>
                 <button
+                  type="button"
                   className="btn btn-danger"
                   style={{ padding: '6px 10px', fontSize: '12px' }}
-                  onClick={() => handleDelete(entry.id)}
+                  onClick={() => setDeletingEntry(entry.id)}
                 >
-                  删除
+                  🗑️
                 </button>
+                {deletingEntry === entry.id ? (
+                  <div className="confirm-actions">
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-confirm"
+                      onClick={() => handleDelete(entry.id)}
+                    >
+                      确认
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-confirm"
+                      onClick={() => setDeletingEntry(null)}
+                    >
+                      取消
+                    </button>
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>
           {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                disabled={currentPage <= 1}
-                onClick={() => setPage(currentPage - 1)}
-              >
-                ◀ 上一页
-              </button>
-              <span className="pagination-info">
-                {currentPage} / {totalPages}
-              </span>
-              <button
-                type="button"
-                className="btn btn-ghost"
-                disabled={currentPage >= totalPages}
-                onClick={() => setPage(currentPage + 1)}
-              >
-                下一页 ▶
-              </button>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           )}
         </>
       )}

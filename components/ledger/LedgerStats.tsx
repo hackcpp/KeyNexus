@@ -25,13 +25,14 @@ import {
   CartesianGrid,
 } from 'recharts'
 import type { LedgerEntry } from '@/types'
+import { Tabs, Spinner } from '@/components/ui'
 
 const INCOME_PIE_COLORS = ['#10b981', '#34d399', '#059669', '#6ee7b7', '#047857']
 const EXPENSE_PIE_COLORS = ['#ef4444', '#f87171', '#dc2626', '#fca5a5', '#b91c1c']
 
 const TOOLTIP_STYLE = {
-  contentStyle: { background: '#161620', border: '1px solid #35354a', borderRadius: '8px' },
-  labelStyle: { color: '#ededf2' },
+  contentStyle: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px' },
+  labelStyle: { color: 'var(--text)' },
 }
 
 function lineTooltipFormatter(value: unknown) {
@@ -54,9 +55,9 @@ function LineChartTooltip({ active, payload, label }: any) {
     <div style={TOOLTIP_STYLE.contentStyle}>
       <div style={TOOLTIP_STYLE.labelStyle}>{label}</div>
       <div style={{ padding: '8px 12px' }}>
-        <div style={{ color: '#10b981', marginBottom: 6 }}>收入： {lineTooltipFormatter(income)}</div>
-        <div style={{ color: '#ef4444', marginBottom: 6 }}>支出： {lineTooltipFormatter(expense)}</div>
-        <div style={{ color: diff === null ? '#c0c0c8' : diff >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+        <div style={{ color: 'var(--success)', marginBottom: 6 }}>收入： {lineTooltipFormatter(income)}</div>
+        <div style={{ color: 'var(--danger)', marginBottom: 6 }}>支出： {lineTooltipFormatter(expense)}</div>
+        <div style={{ color: diff === null ? 'var(--text-dim)' : diff >= 0 ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
           结余： {diff === null ? '—' : `¥${diff.toFixed(2)}`}
         </div>
       </div>
@@ -242,39 +243,21 @@ export function LedgerStats() {
   const periodLabel = viewMode === 'all' ? '全部' : viewMode === 'year' ? `${year}年` : `${month}月`
 
   if (loading) {
-    return (
-      <div className="loading">
-        <div className="loading-spinner" />
-      </div>
-    )
+    return <Spinner />
   }
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-        <div className="tabs" style={{ marginBottom: 0, width: 'auto' }}>
-          <button
-            type="button"
-            className={`tab ${viewMode === 'all' ? 'active' : ''}`}
-            onClick={() => setViewMode('all')}
-          >
-            全部
-          </button>
-          <button
-            type="button"
-            className={`tab ${viewMode === 'year' ? 'active' : ''}`}
-            onClick={() => setViewMode('year')}
-          >
-            按年
-          </button>
-          <button
-            type="button"
-            className={`tab ${viewMode === 'month' ? 'active' : ''}`}
-            onClick={() => setViewMode('month')}
-          >
-            按月
-          </button>
-        </div>
+      <div className="stats-header">
+        <Tabs<ViewMode>
+          tabs={[
+            { label: '全部', value: 'all' },
+            { label: '按年', value: 'year' },
+            { label: '按月', value: 'month' },
+          ]}
+          activeValue={viewMode}
+          onTabChange={setViewMode}
+        />
         {viewMode === 'year' && (
           <div className="month-picker">
             <button type="button" className="btn btn-ghost" onClick={() => setYear(year - 1)}>
@@ -337,10 +320,10 @@ export function LedgerStats() {
               bottom: viewMode === 'month' ? 20 : 24,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#262630" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--bg-elevated)" />
             <XAxis
               dataKey="label"
-              tick={{ fill: '#9090a0', fontSize: viewMode === 'month' ? 10 : 12 }}
+              tick={{ fill: 'var(--text-muted)', fontSize: viewMode === 'month' ? 10 : 12 }}
               interval={0}
               angle={viewMode === 'month' ? -45 : 0}
               textAnchor={viewMode === 'month' ? 'end' : 'middle'}
@@ -348,12 +331,12 @@ export function LedgerStats() {
               padding={{ left: 4, right: 20 }}
               tickMargin={viewMode === 'month' ? 6 : 10}
             />
-            <YAxis tick={{ fill: '#9090a0', fontSize: 12 }} />
+            <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 12 }} />
             <Tooltip {...TOOLTIP_STYLE} content={<LineChartTooltip />} />
             <Line
               type="monotone"
               dataKey="收入"
-              stroke="#10b981"
+              stroke="var(--success)"
               strokeWidth={2}
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
@@ -361,7 +344,7 @@ export function LedgerStats() {
             <Line
               type="monotone"
               dataKey="支出"
-              stroke="#ef4444"
+              stroke="var(--danger)"
               strokeWidth={2}
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
@@ -373,20 +356,13 @@ export function LedgerStats() {
       {(incomeCategoryData.length > 0 || expenseCategoryData.length > 0) && (
         <div className="chart-section">
           <div className="chart-title">{periodLabel}收支分类</div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '24px',
-              alignItems: 'flex-start',
-            }}
-          >
+          <div className="charts-row">
             {incomeCategoryData.length > 0 && (
               <div style={{ flex: '1 1 280px', minWidth: 0 }}>
                 <div
                   style={{
                     fontSize: '14px',
-                    color: '#a0a0b0',
+                    color: 'var(--text-muted)',
                     marginBottom: '8px',
                     fontWeight: 500,
                   }}
@@ -404,7 +380,7 @@ export function LedgerStats() {
                       innerRadius={0}
                       outerRadius="58%"
                       label={pieSlicePercentLabel}
-                      labelLine={{ stroke: '#6b6b80', strokeWidth: 1 }}
+                      labelLine={{ stroke: 'var(--text-dim)', strokeWidth: 1 }}
                     >
                       {incomeCategoryData.map((_, i) => (
                         <Cell key={i} fill={INCOME_PIE_COLORS[i % INCOME_PIE_COLORS.length]} />
@@ -430,7 +406,7 @@ export function LedgerStats() {
                 <div
                   style={{
                     fontSize: '14px',
-                    color: '#a0a0b0',
+                    color: 'var(--text-muted)',
                     marginBottom: '8px',
                     fontWeight: 500,
                   }}
@@ -448,7 +424,7 @@ export function LedgerStats() {
                       innerRadius={0}
                       outerRadius="58%"
                       label={pieSlicePercentLabel}
-                      labelLine={{ stroke: '#6b6b80', strokeWidth: 1 }}
+                      labelLine={{ stroke: 'var(--text-dim)', strokeWidth: 1 }}
                     >
                       {expenseCategoryData.map((_, i) => (
                         <Cell key={i} fill={EXPENSE_PIE_COLORS[i % EXPENSE_PIE_COLORS.length]} />

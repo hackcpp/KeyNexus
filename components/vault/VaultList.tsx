@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { useMasterPassword } from '@/components/providers/MasterPasswordProvider'
 import { useToast } from '@/components/providers/ToastProvider'
@@ -11,8 +11,10 @@ import {
   type PairData,
   type UserPassData,
 } from '@/lib/crypto'
+import { logError } from '@/lib/logger'
 import { createBrowserClient } from '@/lib/supabase/client'
 import type { EditKeyData } from './KeyForm'
+import { Spinner, Pagination, EmptyState } from '@/components/ui'
 
 type KeyItemProps = {
   item: {
@@ -226,6 +228,7 @@ type VaultListProps = {
 
 export function VaultList({ onEdit }: VaultListProps) {
   const { user } = useAuth()
+  const { showToast } = useToast()
   const [keys, setKeys] = useState<KeyItemProps['item'][]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -272,9 +275,11 @@ export function VaultList({ onEdit }: VaultListProps) {
     const { error } = await supabase.from('api_keys').delete().eq('id', id)
 
     if (error) {
-      alert('删除失败：' + error.message)
+      logError('Failed to delete key', error)
+      showToast('删除失败', 'error')
     } else {
       setKeys((prev) => prev.filter((item) => item.id !== id))
+      showToast('已删除')
     }
   }
 
@@ -287,43 +292,34 @@ export function VaultList({ onEdit }: VaultListProps) {
   }, [user, supabase])
 
   if (loading) {
-    return (
-      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-        加载中...
-      </div>
-    )
+    return <Spinner />
   }
 
   return (
     <section className="vault-section">
       <div className="vault-header">
         <h2 className="vault-title">密钥列表</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="controls-row">
           <input
             type="text"
-            className="input"
+            className="input input-pill"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
               setPage(1)
             }}
             placeholder="搜索名称/类型..."
-            style={{
-              maxWidth: '220px',
-              fontSize: '12px',
-              borderRadius: '999px',
-            }}
           />
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          <span className="stat-counter">
             {filteredKeys.length} / {keys.length} 项
           </span>
         </div>
       </div>
 
       {filteredKeys.length === 0 ? (
-        <div className="empty-state">
+        <EmptyState>
           {keys.length === 0 ? '暂无密钥，在上方添加第一个密钥吧！' : '未找到匹配的密钥'}
-        </div>
+        </EmptyState>
       ) : (
         <>
           <div className="vault-grid">
@@ -332,27 +328,12 @@ export function VaultList({ onEdit }: VaultListProps) {
             ))}
           </div>
           {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                disabled={currentPage <= 1}
-                onClick={() => setPage(currentPage - 1)}
-              >
-                ◀ 上一页
-              </button>
-              <span className="pagination-info">
-                {currentPage} / {totalPages}
-              </span>
-              <button
-                type="button"
-                className="btn btn-ghost"
-                disabled={currentPage >= totalPages}
-                onClick={() => setPage(currentPage + 1)}
-              >
-                下一页 ▶
-              </button>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              countLabel="项"
+            />
           )}
         </>
       )}
