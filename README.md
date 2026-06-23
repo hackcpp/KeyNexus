@@ -68,13 +68,21 @@ SoloBiz/
 │   ├── vault/page.tsx          # 密钥管理
 │   └── ledger/page.tsx         # 收支账本（统计 + 记账）
 ├── components/                 # React 组件
+│   ├── shared/                 # 公共 UI 组件（跨模块复用）
+│   │   ├── Pagination.tsx      # 分页导航
+│   │   ├── Loading.tsx         # 加载状态
+│   │   ├── EmptyState.tsx      # 空状态占位
+│   │   ├── SearchInput.tsx     # 搜索输入框
+│   │   ├── SectionHeader.tsx   # 区块标题头
+│   │   ├── PageHeader.tsx      # 页面标题（可附带 tabs）
+│   │   └── index.ts            # barrel 导出
 │   ├── ClientLayout.tsx        # Provider 包装 + 登录守卫
 │   ├── AppShell.tsx            # 侧边栏 + 内容区布局
 │   ├── Sidebar.tsx             # 导航侧边栏
 │   ├── DashboardOverview.tsx   # 总览页
 │   ├── LoginPage.tsx           # 登录页
 │   ├── vault/                  # 密钥模块
-│   │   ├── KeyForm.tsx         # 添加表单
+│   │   ├── KeyForm.tsx         # 添加/编辑表单
 │   │   └── VaultList.tsx       # 密钥列表
 │   ├── ledger/                 # 账本模块
 │   │   ├── LedgerForm.tsx      # 记账表单
@@ -123,7 +131,7 @@ npm run build     # 构建检查
 
 ### E2E 测试
 
-项目使用 [Playwright](https://playwright.dev) 进行端到端测试，测试覆盖了登录认证、账本操作、密钥管理等核心用户旅程。
+项目使用 [Playwright](https://playwright.dev) 进行端到端测试，覆盖登录认证、账本操作、密钥管理等核心流程。
 
 ```bash
 # 安装 Playwright 浏览器（首次运行需要）
@@ -132,11 +140,21 @@ npx playwright install --with-deps chromium
 # 运行所有 E2E 测试
 npm run test:e2e
 
-# 使用交互式 UI 模式运行（推荐开发时使用）
+# 交互式 UI 模式
 npm run test:e2e:ui
 
-# 调试模式运行（带断点支持）
+# 调试模式（支持断点、单步执行）
 npm run test:e2e:debug
+```
+
+**浏览器调试选项：**
+
+```bash
+# 有头模式（显示浏览器窗口，观看测试运行）
+npx playwright test --headed
+
+# 查看测试报告
+npx playwright show-report
 ```
 
 **测试文件结构：**
@@ -151,7 +169,7 @@ e2e/
 └── vault.spec.ts        # 密钥保险库测试
 ```
 
-**测试策略：** 通过拦截 Supabase API 请求返回 mock 数据，无需真实后端即可运行测试。
+**测试策略：** 通过 `addInitScript` 注入 mock session + `page.route` 拦截 Supabase API 请求，无需真实后端即可运行测试。
 
 ## 许可证
 
