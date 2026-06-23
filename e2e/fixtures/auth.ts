@@ -66,7 +66,6 @@ async function setupMockAuth(page: Page) {
   // This catches any network calls the Supabase client might make
   await page.route('**/auth/v1/**', async (route) => {
     const url = route.request().url()
-    const method = route.request().method()
 
     if (url.includes('/auth/v1/session')) {
       await route.fulfill({

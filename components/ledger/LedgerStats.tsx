@@ -41,11 +41,19 @@ function lineTooltipFormatter(value: unknown) {
   return Number.isFinite(n) ? `¥${n.toFixed(2)}` : String(value)
 }
 
-function LineChartTooltip({ active, payload, label }: any) {
+function LineChartTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean
+  payload?: Array<{ name?: string; dataKey?: string; value: unknown }>
+  label?: string
+}) {
   if (!active || !payload || payload.length === 0) return null
 
-  const incomeItem = payload.find((p: any) => p.name === '收入' || p.dataKey === '收入')
-  const expenseItem = payload.find((p: any) => p.name === '支出' || p.dataKey === '支出')
+  const incomeItem = payload.find((p) => p.name === '收入' || p.dataKey === '收入')
+  const expenseItem = payload.find((p) => p.name === '支出' || p.dataKey === '支出')
   const income = typeof incomeItem?.value === 'number' ? incomeItem.value : null
   const expense = typeof expenseItem?.value === 'number' ? expenseItem.value : null
   const diff = typeof income === 'number' && typeof expense === 'number' ? income - expense : null
@@ -54,9 +62,18 @@ function LineChartTooltip({ active, payload, label }: any) {
     <div style={TOOLTIP_STYLE.contentStyle}>
       <div style={TOOLTIP_STYLE.labelStyle}>{label}</div>
       <div style={{ padding: '8px 12px' }}>
-        <div style={{ color: '#10b981', marginBottom: 6 }}>收入： {lineTooltipFormatter(income)}</div>
-        <div style={{ color: '#ef4444', marginBottom: 6 }}>支出： {lineTooltipFormatter(expense)}</div>
-        <div style={{ color: diff === null ? '#c0c0c8' : diff >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+        <div style={{ color: '#10b981', marginBottom: 6 }}>
+          收入： {lineTooltipFormatter(income)}
+        </div>
+        <div style={{ color: '#ef4444', marginBottom: 6 }}>
+          支出： {lineTooltipFormatter(expense)}
+        </div>
+        <div
+          style={{
+            color: diff === null ? '#c0c0c8' : diff >= 0 ? '#10b981' : '#ef4444',
+            fontWeight: 600,
+          }}
+        >
           结余： {diff === null ? '—' : `¥${diff.toFixed(2)}`}
         </div>
       </div>
