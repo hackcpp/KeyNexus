@@ -121,6 +121,38 @@ npm run lint      # 代码检查
 npm run build     # 构建检查
 ```
 
+### E2E 测试
+
+项目使用 [Playwright](https://playwright.dev) 进行端到端测试，测试覆盖了登录认证、账本操作、密钥管理等核心用户旅程。
+
+```bash
+# 安装 Playwright 浏览器（首次运行需要）
+npx playwright install --with-deps chromium
+
+# 运行所有 E2E 测试
+npm run test:e2e
+
+# 使用交互式 UI 模式运行（推荐开发时使用）
+npm run test:e2e:ui
+
+# 调试模式运行（带断点支持）
+npm run test:e2e:debug
+```
+
+**测试文件结构：**
+
+```
+e2e/
+├── fixtures/
+│   └── auth.ts          # 认证 mock fixture（模拟 Supabase 会话）
+├── login.spec.ts        # 登录页与认证拦截测试
+├── dashboard.spec.ts    # 系统总览页测试
+├── ledger.spec.ts       # 收支账本测试
+└── vault.spec.ts        # 密钥保险库测试
+```
+
+**测试策略：** 通过拦截 Supabase API 请求返回 mock 数据，无需真实后端即可运行测试。
+
 ## 许可证
 
 MIT License
